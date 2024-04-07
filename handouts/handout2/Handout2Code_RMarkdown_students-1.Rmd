@@ -1,0 +1,281 @@
+---
+title: "Handout2Code_RMarkdown_students"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+# Example 3: HeightFoot.xls
+
+Import Data Into R from Excel file (1) Run command:
+install.packages("readxl") if have never done so (2) Save data file to
+same location as R script; then, (3) Run the following three commands
+
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+HHFData=read_excel("HandHeightFoot.xls")
+
+```
+
+View initial rows of data frame & view data frame structure
+
+```{r}
+head(HHFData)
+str(HHFData)
+```
+
+### 3(b)
+
+Scatterplot Height v. Footsize
+
+```{r}
+plot(Height~Footsize,data=HHFData,pch=19)
+```
+
+Compute correlation r
+
+```{r}
+cor(HHFData$Height,HHFData$Footsize)
+```
+
+### 3(f)
+
+SAE(ybar)
+
+```{r}
+sum( abs( HHFData$Height - 69.97 ) )
+
+```
+
+SSE(ybar)
+
+```{r}
+sum( ( HHFData$Height - 69.97 )^2 )
+
+```
+
+### 3(g)
+
+LAD fit & summary
+
+```{r}
+#install.packages("L1pack")
+library(L1pack)
+fitLAD=lad(Height~Footsize,data=HHFData)
+summary(fitLAD)
+```
+
+SAE(LAD)
+
+```{r}
+sum( abs( HHFData$Height - fitted(fitLAD) ) )
+```
+
+SSE(LAD)
+
+```{r}
+sum( ( HHFData$Height - fitted(fitLAD) )^2 )
+
+```
+
+LS fit & summary
+
+```{r}
+fitLS=lm(Height~Footsize,data=HHFData)
+summary(fitLS)
+```
+
+SAE(LS)
+
+```{r}
+sum( abs( HHFData$Height - fitted(fitLS) ) )
+```
+
+SSE(LS)
+
+```{r}
+sum( ( HHFData$Height - fitted(fitLS) )^2 )
+
+```
+
+Scatterplot Height v. Footsize
+
+```{r}
+plot(Height~Footsize,data=HHFData,pch=19)
+
+```
+
+Colors for fitted lines
+
+```{r}
+plot(Height~Footsize,data=HHFData,pch=19)
+
+#install.packages(RColorBrewer)
+library(RColorBrewer)
+cols <- brewer.pal(3, "Set1")
+
+#Superimpose mean line
+abline(h=mean(HHFData$Height),col=cols[1],lty=2)
+
+#Superimpose LAD line
+abline(fitLAD,col=cols[2],lty=3)
+
+# superimpose LS line
+abline(fitLS,col=cols[3],lty=1)
+
+#add plot legend
+legend('topleft',lty=c(2,3,1),legend=c('mean','LAD','LS'),col=cols)
+```
+
+### 3(i)
+
+Prediction w/ footsize=28
+
+```{r}
+40.41+1.12*28
+
+```
+
+### 3(j)
+
+Prediction w/ footsize=40
+
+```{r}
+40.41+1.12*85.21
+
+```
+
+# Example 4: paper.xls
+
+Import Data Into R from Excel file (1) Run command:
+install.packages("readxl") if have never done so (2) Save data file to
+same location as R script; then, (3) Run the following three commands
+
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+PaperData = read_excel('paper.xlsx', col_names=TRUE)
+```
+
+View structure
+
+```{r}
+head(PaperData)
+str(PaperData)
+```
+
+LS fit
+
+```{r}
+paper.fit=lm(Strength ~CookingTime+Pressure, data=PaperData)
+summary(paper.fit)
+```
+
+3d sccatterplot Strength \~ CookingTime+Pressure
+
+```{r}
+library(rgl)
+with(PaperData, plot3d(CookingTime, Pressure, Strength, size=8,xlab='Time'))
+```
+
+3d sccatterplot Strength with regression surface
+
+```{r}
+with(PaperData, plot3d(CookingTime, Pressure, Strength, size=8,xlab='Time'))
+
+#regression surface function
+paper.surface<-function(x1,x2){
+  paper.fit$coeff[1]+paper.fit$coeff[2]*x1+paper.fit$coeff[3]*x2
+}
+
+#plot regression surface
+with(PaperData,{
+  x1=seq(min(CookingTime),max(CookingTime),length=100)
+  x2=seq(min(Pressure),max(Pressure),length=100)
+  y=outer(x1,x2,paper.surface)
+  surface3d(x1,x2,y,alpha=0.8,front='lines', back='lines',col='red')
+})
+```
+
+### 4(b)
+
+Prediction w/ CookingTime=2 & Pressure=600
+
+```{r}
+189.5 + 1.5*3 + 0.0064*600
+```
+
+### 4(b)
+
+Prediction w/ CookingTime=3 & Pressure=600
+
+```{r}
+189.5 + 1.5*4 + 0.0064*600
+```
+
+## MEAN PLANE
+
+Compute mean strength
+
+```{r}
+mean(PaperData$Strength)
+```
+
+3d scatterplot Strength \~ CookingTime+Pressure
+
+```{r}
+with(PaperData, plot3d(x=CookingTime, y=Pressure, z=Strength, size=8,xlab='Time'))
+```
+
+3d scatterplot Strength with MEAN PLANE
+
+```{r}
+with(PaperData, plot3d(x=CookingTime, y=Pressure, z=Strength, size=8,xlab='Time'))
+
+#Regression surface function (mean plane)
+paper.surface2<-function(x1,x2){
+  mean(PaperData$Strength)+0*x1+0*x2
+}
+
+#Plot mean plane
+with(PaperData,{
+  x1=seq(min(CookingTime),max(CookingTime),length=100)
+  x2=seq(min(Pressure),max(Pressure),length=100)
+  y=outer(x1,x2,paper.surface2)
+  #print(y)
+  surface3d(x1,x2,y,alpha=0.8,front='lines', back='lines',col='green')
+})
+```
+
+LS plane SSE
+
+```{r}
+sum( ( PaperData$Strength - fitted(paper.fit) )^2 )
+```
+
+Mean plane SSE
+
+```{r}
+sum( ( PaperData$Strength - mean(PaperData$Strength) )^2 )
+```
+
+### 4(g)
+
+R\^2 by hand calculation
+
+```{r}
+((30.49-66.31)/30.49)*100
+((66.31-30.49)/66.31)*100
+```
+
+### 4(i)
+
+R\^2 from r by hand calculation
+
+```{r}
+
+(0.802)^2
+```

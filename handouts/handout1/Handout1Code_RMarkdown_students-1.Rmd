@@ -1,0 +1,63 @@
+---
+title: "Handout1_RMarkdown"
+output: html_document
+---
+
+# Example 1: airfare
+
+Import Data Into R from Excel file\
+(1) Run command: install.packages("readxl") if have never done so\
+(2) Save data file to same location as R script; then,\
+(3) Run the following three commands
+
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+airfareData=read_excel("airfare.xls")
+```
+
+View data structure and summary\
+syntax str(my.data), summary(my.data)
+
+```{r}
+str(airfareData)
+summary(airfareData)
+```
+
+### 1(f)
+
+Create scatter plot\
+syntax: plot(y\~x, data=my.data)
+
+```{r}
+plot(price~distance,data=airfareData) 
+```
+
+The pch argument changes the symbol of points\
+pch=19 makes the points solid circles
+
+```{r}
+plot(price~distance,data=airfareData, pch=19) 
+
+```
+
+# Example 3: carsMSRP
+
+Import Data Into R from .csv\
+(1) Run command: install.packages("readr") if have never done so\
+(2) Save data file to same location as R script; then,\
+(3) Run the following three commands
+
+```{r}
+library(readr)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+carsMSRP = read_csv("carsMSRP.csv")
+```
+
+Correlation matrix
+
+```{r}
+cor(carsMSRP[carsMSRP$Year==2009 & carsMSRP$Popularity<2400
+             & carsMSRP$HP<450 & carsMSRP$City_MPG<30,c(13,14,5,15)])
+
+```
