@@ -1,0 +1,160 @@
+---
+title: "Handout3Code_RMarkdown_students"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 1: workcrew.xls
+
+Import Data Into R from Excel file\
+(1) Run command: install.packages("readxl") if have never done so\
+(2) Save data file to same location as R script; then,\
+(3) Run the following three commands
+
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+workData=read_excel('workcrew.xls')
+```
+
+View structure and data -*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
+
+```{r}
+str(workData)
+head(workData)
+```
+
+### 1(b-c)
+
+Beta-hat using matrix multiplication
+
+```{r}
+(X=matrix(c(rep(1,8), workData$crew, workData$bonus),nrow=8))
+(y=workData$productivity)
+solve(t(X) %*% X) %*% t(X) %*% y
+```
+
+### 1(d)
+
+LS model productivity \~ crew + bonus
+
+\-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
+
+```{r}
+fit.work=lm(productivity ~ crew + bonus, data=workData)
+summary(workData)
+```
+
+### 1(f)
+
+Compute variable means.
+
+\-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
+
+```{r}
+mean(???)
+mean(???)
+```
+
+Prediction at mean values of predictors -*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
+
+```{r}
+#Write the arithmetic prediction below:
+???
+#Matrix multiplication prediction:
+matrix(c(1,5,2.5),nrow=1) %*% matrix(c(0.375,5.375,9.25),nrow=3)
+```
+
+### 1(g)
+
+Predicted values
+
+```{r}
+fit.work$fitted.values
+```
+
+### 1(h)
+
+Residuals
+
+```{r}
+resid(fit.work)
+```
+
+### 1(i)
+
+Regression surface
+
+```{r}
+#3d scatterplot productivity ~ crew + bonus
+library(rgl)
+with(workData, plot3d(x=crew, y=bonus, z=productivity, size=10))
+
+#regression surface function
+work.surface<-function(x1,x2){
+  fit.work$coeff[1]+fit.work$coeff[2]*x1+fit.work$coeff[3]*x2
+}
+
+#plot regression surface
+with(workData,{
+  x1=seq(min(crew),max(crew),length=100)
+  x2=seq(min(bonus),max(bonus),length=100)
+  y=outer(x1,x2,work.surface)
+  surface3d(x1,x2,y,alpha=0.8,front='lines', back='lines',col='blue')
+})
+```
+
+Sum residuals
+
+```{r}
+round(sum(resid(fit.work)),10)
+```
+
+### 1(j)
+
+Compute hat matrix -*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
+
+```{r}
+??? %*% solve( ??? %*% ???) %*% ???
+```
+
+### 1(k)
+
+Weight of y_j on (y_i)-hat=h_ij y_j for i=3.\
+Reports the hat matrix but only for unit 3.
+
+```{r}
+(X %*% solve(t(X) %*% X) %*% t(X))[3,]
+```
+
+### 1(l)
+
+Do work by hand!:D
+
+### 1(m)
+
+Vector of Y values
+
+```{r}
+y
+```
+
+Vector containing actual contributions of y_j on (y_i)-hat=h_ij y_j for i=3.
+
+```{r}
+(X %*% solve(t(X) %*% X) %*% t(X))[3,]*y
+```
+
+If you sum the values above, you will get the predicted value for unit 3
+
+```{r}
+sum((X %*% solve(t(X) %*% X) %*% t(X))[3,]*y)
+```
+
+Predicted value for unit 3
+
+```{r}
+fit.work$fitted.values[3]
+
+```
