@@ -1,0 +1,93 @@
+---
+title: "Handout4Code_RMarkdown_students"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Example 1: MaleBirths.xls            #
+
+Import Data Into R from Excel file  
+ (1) Run command: install.packages("readxl") if have never done so  
+ (2) Save data file to same location as R script; then,  
+ (3) Run the following three commands  
+ 
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+MaleBirths=read_excel("MaleBirths.xls")
+
+```
+
+View data frame structure
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+```{r}
+str(???)
+View(???)
+```
+
+### 1(a & (e))
+
+Fitted line plots for each country
+```{r}
+par(mfrow=c(1,3)) #1x3 plot grid
+```
+
+
+USA
+```{r}
+plot(usa~year, data=MaleBirths, ylab='male birth percentage',pch=19,ylim=c(50.8,51.6),main='USA')
+fit_usa=lm(usa~year, data=MaleBirths)
+abline(fit_usa,col='blue')
+```
+
+
+Canada
+```{r}
+plot(canada~year,data=MaleBirths,ylab='male birth percentage', pch=19,ylim=c(50.8,51.6),main='Canada')
+fit_canada=lm(canada~year, data=MaleBirths)
+abline(fit_canada,col='blue')
+```
+
+
+Netherlands
+
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+```{r}
+plot(???,data=???,ylab='???',pch=19,ylim=c(50.8,51.6),main='???')
+fit_netherla=lm(???, data=???)
+abline(???,col='blue')
+```
+
+### 1(f-h)
+
+Model summary % male birth regressed on year each country
+
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+```{r}
+summary(fit_usa)
+summary(???)
+summary(???)
+
+```
+
+s each country
+```{r}
+c(summary(fit_usa)$sigma,summary(fit_canada)$sigma,summary(fit_netherla)$sigma)
+
+```
+
+R.squared each country
+
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+```{r}
+c(summary(fit_usa)$r.squared,
+  summary(fit_canada)$r.squared,
+  ???)
+
+```
