@@ -1,0 +1,70 @@
+---
+title: "Homework X"
+subtitle: STAT XXX
+author: "Ishaan Sathaye"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: readable
+    highlight: haddock
+    toc: true
+    toc_float: true
+    code_folding: hide  
+---
+
+```{r chunk setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval=TRUE,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+# Problem 1
+
+## Part (b)
+
+```{r}
+
+```
+
+## Part (c)
+
+```{r}
+
+
+```
+
+## Part (d)
+
+```{r, fig.width=6, fig.height=4}
+
+
+```
+
+# Problem 2
+
+## Part (a)
+
+# Problem 4
+
+## Part (a)
+
+The self-report method has some potential limitations and can have caused the measurements of the hangover severity to become biased. One limitation would be participants' subjective interpretations of the hangover symptoms. From the symptoms list, feelings such as had difficulty concentrating or felt very weak would be open to interpretation. What one person might consider very weak might just be a mild feeling to another. This could affect the conclusions drastically since the factor loadings from Table 4 would be different. Another limitation would be that since participants were told to recall symptoms over the past year, more recent or even severe hangovers can become over-represented. When it comes to talking about the impact between men and women, the self-reporting could become under-represented for women, given the social stigma around reporting symptoms especially for women.
+
+In terms of how this method affected the conclusion, it would be possible that there were some under-reports for women. When controlling for sex differences in alcohol involvement, women had higher scores on the scale than for men, which would go against the bias for women in terms of being under-represented. This means that these potential biases did not favor one gender over another in a way that would change the conclusions drastically.
+
+## Part (b)
+
+The type of sample that was used was a convenience sample. It consisted of 1230 currently drinking college students from the University of Missouri-Columbia. Of those 62% were women, 91% were Caucasian, and the average age was 18.8 years old with most being between 18-22 years old. On the basis of this sample there are many limitations when generalizing the results of this paper. One would be age range which would be very specific in terms of generalizing hangover symptoms. Then the college student status, lack of racial diversity, as well as drawing from just one university would not be adequate to generalize to larger populations. In fact, the paper does address this limitation by saying, "it is important to point out that participants were called from a single class on a single campus, and this caution must be exercised when comparing these findings to those of other larger, multi-campus studies" (Slutske et al. 1449).
+
+## Part (c)
+
+The two variables that were measured for each person to provide this result would be their score on the HSS (Hangover Symptoms Scale) and the frequency of drinking in the past year. The logical explanatory variable would be the frequency of drinking since the hangover symptoms would be the outcome variable. The reason for this is that the drinking frequency happens before the symptoms and that it is the frequency that causes the more frequent hangover symptoms. Intuitively this makes more sense where drinking more results in more hangovers. Also in the paper, it is mentioned that HSS is a valid measure of hangover, then it would be related to drinking heaviness.
+
+## Part (d)
+
+`r = 0.44` is the Pearson correlation coefficient which measures the strength of the linear association between two quantitative variables. In this case the 2 variables are the scores on the HSS and the frequency of drinking in the past year. So a value of 0.44 means that there is a moderate positive linear relationship between the HSS scores and drinking frequency. So as the drinking frequency increases, HSS scores also tend to increase.
+
+## Part (e)
+
+As it is used in the quote, the word significant means that the correlation was calculated from the sample data and that the result is unlikely to have occurred by chance alone. Also, a statistical test was conducted to see if this correlation was statistically significantly different from zero. Also from the paper it means that the p-value from that test was below the significance level (p \< 0.001). So in the end it means that the correlation is likely a real, non-zero association between the scores on the HSS and frequency of drinking and not just a sampling error.
