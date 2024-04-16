@@ -1,0 +1,114 @@
+---
+title: "Handout6Code_RMarkdown_studentsANSWERS"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 2: TVs and Life Expectancy   #
+
+Import Data Into R from Excel file  
+ (1) Run command: install.packages("readxl") if have never done so  
+ (2) Save data file to same location as R script; then,  
+ (3) Run the following three commands  
+
+```{r}
+library(readxl)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+TVLife=read_excel("TVLife.xls")
+
+```
+
+
+### 2(a)
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+Fit linear model and Fitted line plot
+
+```{r}
+par(mfrow=c(1,1)) #plot in 1x1 grid
+plot(???, data= ???, pch=??? , col='black')
+tv.fit=lm(???, data=???)
+abline(???, col='blue')
+
+```
+
+### 2(b)
+
+Identify points.  
+Add text labels to points of interest  
+
+```{r}
+par(mfrow=c(1,1)) #plot in 1x1 grid
+plot(LifeExpectancy~TVsperK, data=TVLife, pch=19,col='black')
+tv.fit=lm(LifeExpectancy~TVsperK, data=TVLife)
+abline(tv.fit$coeff,col='blue')
+
+with(TVLife, text(x=TVsperK[c(15,16,22,20)],y=LifeExpectancy[c(15,16,22,20)],
+                  labels=c(country[c(15,16,22)],'US'), pos=c(4,4,4,1), cex=0.8))
+
+```
+
+
+### 2(d)
+
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-* 
+
+PLOT: residuals vs. fitted plot
+
+```{r}
+plot(resid(???)~fitted(???),ylab="Residual",xlab="Fitted",pch=19)
+abline(h=0,lty=2)
+
+```
+
+### 2(e)
+
+-*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*   
+PLOT: residuals vs. explanatory plot  
+
+
+```{r}
+plot(??? ~ ??? , data=TVLife, ylab="Residual", pch=19)
+abline(h=0,lty=2)
+
+```
+
+### 2(f)
+
+PLOT: normal Q-Q plot and histogram of residuals
+```{r}
+par(mfrow=c(1,2))  #plot in 1x2 grid   
+qqnorm(resid(tv.fit),ylab="Residual"); qqline(resid(tv.fit),lty=3)
+hist(resid(tv.fit),main="", xlab="Residual",col='lightblue')
+
+```
+
+
+### 2(g)
+
+Statistical tests of regression assumptions
+
+```{r}
+#Shapiro-Wilk test
+shapiro.test(resid(tv.fit))
+
+#Breusch-Pagan
+#install.packages('lmtest') if haven't already
+library('lmtest')
+bptest(tv.fit)
+
+```
+
+### 2(h)
+
+View R's four-in-one diagnostic plot (will cover the right two plots later)
+```{r}
+par(mfrow=c(1,4)); plot(tv.fit)
+
+```
+
+
+
+
+
