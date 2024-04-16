@@ -141,8 +141,8 @@ Fit LS Regression Line\
 ```{r}
 par(mfrow=c(1,1))
 plot(GPA~StudyHours,data=UOPgpaData,pch=19,col='black')
-UOPgpa.fit=lm(???,data=UOPgpaData)
-abline(???,col='blue')
+UOPgpa.fit=lm(GPA~StudyHours,data=UOPgpaData)
+abline(UOPgpa.fit,col='blue')
 summary(UOPgpa.fit)
 
 ```
@@ -165,7 +165,8 @@ Compute t.\
 -*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
 
 ```{r}
-
+t = (0.08938/0.02771)
+t
 ```
 
 ### 2(f-g)
@@ -180,6 +181,8 @@ tstar=qt(p=0.975, df=80-2);tstar
 CI calculation by hand. -*-*-*-* IMPORTANT: Write the coded needed to answer the question.-*-*-*-*
 
 ```{r}
+0.08938 + 1.990847*(0.02771)
+0.08938 - 1.990847*(0.02771)
 
 ```
 
