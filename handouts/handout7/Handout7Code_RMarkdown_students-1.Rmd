@@ -5,13 +5,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Example 1: mazda.txt
 
-# Example 1: mazda.txt                 #
-
-
-Import Data Into R from .txt file  
- (1) Save data file to same location as R script; then,  
- (2) Run the following commands  
+Import Data Into R from .txt file\
+(1) Save data file to same location as R script; then,\
+(2) Run the following commands
 
 ```{r}
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
@@ -22,6 +20,7 @@ head(mazdaData)
 ```
 
 ### 1(a)
+
 +0.5 also helps deal with log(age=0)
 
 ```{r}
@@ -31,7 +30,9 @@ summary(mazdaData)
 ```
 
 ### 1(b)
-Price~Age
+
+Price\~Age
+
 ```{r}
 plot(Price~Age,data=mazdaData,pch=19)
 mazda.fit0=lm(Price~Age,data=mazdaData)
@@ -39,10 +40,9 @@ abline(mazda.fit0,col='blue')
 summary(mazda.fit0)
 ```
 
-
-
 ### 1(c)
-Residual diagnostics  
+
+Residual diagnostics\
 Plots to examine whether assumptions are met.
 
 ```{r}
@@ -59,8 +59,8 @@ par(mfrow=c(1,1))
 
 ### 1(e)
 
-Transforming X only.  
-Price~log(Age,2)
+Transforming X only.\
+Price\~log(Age,2)
 
 ```{r}
 mazda.fit1=lm(Price~log(Age,2),data=mazdaData)
@@ -68,7 +68,7 @@ summary(mazda.fit1)
 
 ```
 
-Residual diagnostics  
+Residual diagnostics\
 Plots to examine whether assumptions are met.
 
 ```{r}
@@ -79,11 +79,10 @@ plot(mazda.fit1,c(1,2))
 hist(resid(mazda.fit1),main="", xlab="Residuals",col='lightblue')
 ```
 
-
 ### 1(g)
 
-Transforming Y only.  
-log(Price,2)~Age
+Transforming Y only.\
+log(Price,2)\~Age
 
 ```{r}
 mazda.fit2=lm(log(Price,2)~Age,data=mazdaData)
@@ -91,8 +90,9 @@ summary(mazda.fit2)
 
 ```
 
-Residual diagnostics  
+Residual diagnostics\
 Plots to examine whether assumptions are met.
+
 ```{r}
 par(mfrow=c(2,2))
 plot(log(Price,2)~Age,data=mazdaData, pch=19, ylab='log(Price)')
@@ -105,7 +105,9 @@ par(mfrow=c(1,1))
 ```
 
 ### 1(i)
-log(Price,2)~log(Age,2)
+
+log(Price,2)\~log(Age,2)
+
 ```{r}
 mazda.fit3=lm(log(Price,2)~log(Age,2),data=mazdaData)
 summary(mazda.fit3)
@@ -113,7 +115,8 @@ summary(mazda.fit3)
 ```
 
 ### 1(j)
-Box-Cox Transformation 
+
+Box-Cox Transformation
 
 ```{r}
 #install.packages('car') #if havn't already
@@ -121,14 +124,13 @@ library(car)
 powerTransform(Price~Age,data=mazdaData)
 ```
 
-# Example 2: AnimalBrains.xls          #
+# Example 2: AnimalBrains.xls
 
+Import Data Into R from Excel file\
+(1) Run command: install.packages("readxl") if have never done so\
+(2) Save data file to same location as R script; then,\
+(3) Run the following three commands
 
-Import Data Into R from Excel file  
- (1) Run command: install.packages("readxl") if have never done so  
- (2) Save data file to same location as R script; then,  
- (3) Run the following three commands  
- 
 ```{r}
 library(readxl)
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
@@ -136,6 +138,7 @@ AnimalBrains=read_excel('AnimalBrains.xls')
 ```
 
 View Data Structure
+
 ```{r}
 str(AnimalBrains)
 head(AnimalBrains)
@@ -144,7 +147,7 @@ summary(AnimalBrains)
 
 ### 2(a)
 
-Linear model (body ~ geration)
+Linear model (body \~ geration)
 
 ```{r}
 
@@ -152,7 +155,7 @@ Linear model (body ~ geration)
 
 ```
 
-Original untransformed.  
+Original untransformed.\
 Plots to examine whether assumptions are met.
 
 ```{r}
@@ -161,31 +164,27 @@ Plots to examine whether assumptions are met.
 
 ```
 
-Identify transformations.  
+Identify transformations.\
 Start by transforming Y going down the ladder, then try transforming X.
 
 ```{r}
 
 ```
 
+```{r}
+
+```
 
 ```{r}
 
 ```
 
-
 ```{r}
 
 ```
-
-
-
-```{r}
-
-```
-
 
 ### 2(f)
+
 Matrix scatter (quantitative variables only)
 
 ```{r}
@@ -193,6 +192,7 @@ pairs(AnimalBrains[,c(3,2,4,5)])
 ```
 
 Correlation matrix
+
 ```{r}
 cor(AnimalBrains[,c(3,2,4,5)])
 ```
@@ -208,10 +208,9 @@ Matrix scatter & correlation matrix LOGGED variables.Tip: use the "log" function
 
 ```
 
-
 ### 2(h)
 
-Model: log(body)~log(litter)+log(gestation)
+Model: log(body)\~log(litter)+log(gestation)
 
 ```{r}
 
@@ -220,7 +219,8 @@ Model: log(body)~log(litter)+log(gestation)
 
 ```
 
-3d scatterplot log(brain)~log(body)+log(gestation)
+3d scatterplot log(brain)\~log(body)+log(gestation)
+
 ```{r}
 fit.body=lm(log(body)~log(litter)+log(gestation),data=AnimalBrains)
 summary(fit.body)
@@ -240,9 +240,9 @@ persp3d(x1,x2,y,alpha=0.2,col='lightblue',add=TRUE)
 persp3d(x1,x2,y,alpha=1,col='black',front = "lines", back = "lines",add=TRUE)
 ```
 
-
 ### 2(i)
-Residual diagnostics  
+
+Residual diagnostics\
 Plots to examine whether assumptions are met.
 
 ```{r}
@@ -274,11 +274,10 @@ library('lmtest')
 bptest(fit.body)
 ```
 
-
-
-# Example 3: Don't Trust Scat. Matrix  #
+# Example 3: Don't Trust Scat. Matrix
 
 Create, x1, x2, and y
+
 ```{r}
 set.seed(452) 
 x1=runif(50,-4,4)
@@ -287,8 +286,8 @@ y=2+2*x1+0.5*x2+rnorm(length(x1),0,1.4)
 set.seed(NULL) 
 ```
 
-
 Fit model
+
 ```{r}
 fit=lm(y~x1+x2)
 summary(fit)
@@ -296,8 +295,8 @@ pairs(y~x1+x2)
 cor(x1,x2)
 ```
 
-
 3d scatterplot
+
 ```{r}
 #library(rgl)
 plot3d(x1, x2, y, size=10)
@@ -314,6 +313,7 @@ persp3d(x1.surf,x2.surf,y.surf,alpha=1,col='black',front = "lines", back = "line
 ```
 
 Residual diagnostics
+
 ```{r}
 par(mfrow=c(2,3)) 
 plot(resid(fit)~fitted(fit),ylab="Residuals",xlab="Fitted",pch=19)
@@ -343,4 +343,3 @@ shapiro.test(resid(fit))
 #library('lmtest')
 bptest(fit)
 ```
-
