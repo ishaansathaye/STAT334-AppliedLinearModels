@@ -1,0 +1,346 @@
+---
+title: "Handout7Code_RMarkdown_PROF"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Example 1: mazda.txt                 #
+
+
+Import Data Into R from .txt file  
+ (1) Save data file to same location as R script; then,  
+ (2) Run the following commands  
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+mazdaData = read.table('mazda.txt', header=TRUE, sep="\t")
+str(mazdaData)
+summary(mazdaData)
+head(mazdaData)
+```
+
+### 1(a)
++0.5 also helps deal with log(age=0)
+
+```{r}
+mazdaData$Age=91-mazdaData$Year+0.5  
+head(mazdaData)
+summary(mazdaData)
+```
+
+### 1(b)
+Price~Age
+```{r}
+plot(Price~Age,data=mazdaData,pch=19)
+mazda.fit0=lm(Price~Age,data=mazdaData)
+abline(mazda.fit0,col='blue')
+summary(mazda.fit0)
+```
+
+
+
+### 1(c)
+Residual diagnostics  
+Plots to examine whether assumptions are met.
+
+```{r}
+par(mfrow=c(2,2))
+plot(Price~Age,data=mazdaData,pch=19)
+mazda.fit0=lm(Price~Age,data=mazdaData)
+abline(mazda.fit0,col='blue')
+summary(mazda.fit0)
+plot(mazda.fit0,c(1,2))
+hist(resid(mazda.fit0),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+
+```
+
+### 1(e)
+
+Transforming X only.  
+Price~log(Age,2)
+
+```{r}
+mazda.fit1=lm(Price~log(Age,2),data=mazdaData)
+summary(mazda.fit1)
+
+```
+
+Residual diagnostics  
+Plots to examine whether assumptions are met.
+
+```{r}
+par(mfrow=c(2,2))
+plot(Price~log(Age,2),data=mazdaData,pch=19, xlab='log(Age)')
+abline(mazda.fit1,col='blue')
+plot(mazda.fit1,c(1,2))
+hist(resid(mazda.fit1),main="", xlab="Residuals",col='lightblue')
+```
+
+
+### 1(g)
+
+Transforming Y only.  
+log(Price,2)~Age
+
+```{r}
+mazda.fit2=lm(log(Price,2)~Age,data=mazdaData)
+summary(mazda.fit2)
+
+```
+
+Residual diagnostics  
+Plots to examine whether assumptions are met.
+```{r}
+par(mfrow=c(2,2))
+plot(log(Price,2)~Age,data=mazdaData, pch=19, ylab='log(Price)')
+
+abline(mazda.fit2,col='blue')
+plot(mazda.fit2,c(1,2))
+
+hist(resid(mazda.fit2),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+### 1(i)
+log(Price,2)~log(Age,2)
+```{r}
+mazda.fit3=lm(log(Price,2)~log(Age,2),data=mazdaData)
+summary(mazda.fit3)
+
+```
+
+### 1(j)
+Box-Cox Transformation 
+
+```{r}
+#install.packages('car') #if havn't already
+library(car)
+powerTransform(Price~Age,data=mazdaData)
+```
+
+# Example 2: AnimalBrains.xls          #
+
+
+Import Data Into R from Excel file  
+ (1) Run command: install.packages("readxl") if have never done so  
+ (2) Save data file to same location as R script; then,  
+ (3) Run the following three commands  
+ 
+```{r}
+library(readxl)
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+AnimalBrains=read_excel('AnimalBrains.xls')
+```
+
+View Data Structure
+```{r}
+str(AnimalBrains)
+head(AnimalBrains)
+summary(AnimalBrains)
+```
+
+### 2(a)
+
+Linear model (body ~ geration)
+
+```{r}
+
+  
+
+```
+
+Original untransformed.  
+Plots to examine whether assumptions are met.
+
+```{r}
+
+
+
+```
+
+Identify transformations.  
+Start by transforming Y going down the ladder, then try transforming X.
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
+### 2(f)
+Matrix scatter (quantitative variables only)
+
+```{r}
+pairs(AnimalBrains[,c(3,2,4,5)]) 
+```
+
+Correlation matrix
+```{r}
+cor(AnimalBrains[,c(3,2,4,5)])
+```
+
+### 2(g)
+
+Matrix scatter & correlation matrix LOGGED variables.Tip: use the "log" function".
+
+```{r}
+
+
+
+
+```
+
+
+### 2(h)
+
+Model: log(body)~log(litter)+log(gestation)
+
+```{r}
+
+
+
+
+```
+
+3d scatterplot log(brain)~log(body)+log(gestation)
+```{r}
+fit.body=lm(log(body)~log(litter)+log(gestation),data=AnimalBrains)
+summary(fit.body)
+library(rgl)
+with(AnimalBrains, plot3d(x=log(litter), y=log(gestation), z=log(body), size=10))
+
+#regression surface function
+surface.body<-function(x1,x2){
+  fit.body$coeff[1]+fit.body$coeff[2]*x1+fit.body$coeff[3]*x2
+}
+
+#plot regression surface
+x1<-seq(min(log(AnimalBrains$litter)),max(log(AnimalBrains$litter)),length=15)
+x2<-seq(min(log(AnimalBrains$gestation)),max(log(AnimalBrains$gestation)),length=15)
+y<-outer(x1,x2,surface.body)
+persp3d(x1,x2,y,alpha=0.2,col='lightblue',add=TRUE)
+persp3d(x1,x2,y,alpha=1,col='black',front = "lines", back = "lines",add=TRUE)
+```
+
+
+### 2(i)
+Residual diagnostics  
+Plots to examine whether assumptions are met.
+
+```{r}
+par(mfrow=c(2,3)) 
+plot(resid(fit.body)~fitted(fit.body),ylab="Residuals",xlab="Fitted",pch=19)
+abline(h=0,lty=2)
+
+#residuals vs. explanatory plot
+plot(resid(fit.body)~log(litter),data=AnimalBrains,ylab="Residuals",pch=19)
+abline(h=0,lty=2)
+
+plot(resid(fit.body)~log(gestation),data=AnimalBrains,ylab="Residuals",pch=19)
+abline(h=0,lty=2)
+
+#normal Q-Q plot and histogram of residuals
+qqnorm(resid(fit.body),ylab="Residuals"); qqline(resid(fit.body),lty=3)
+hist(resid(fit.body),main="", xlab="Residuals",col='lightblue')
+
+```
+
+Shapiro-Wilk & Breusch-Pagant test
+
+```{r}
+#Shapiro-Wilk test
+shapiro.test(resid(fit.body))
+
+#install.packages('lmtest') if haven't already
+library('lmtest')
+bptest(fit.body)
+```
+
+
+
+# Example 3: Don't Trust Scat. Matrix  #
+
+Create, x1, x2, and y
+```{r}
+set.seed(452) 
+x1=runif(50,-4,4)
+x2=-x1^2-0.5*runif(50,-4,4)^2
+y=2+2*x1+0.5*x2+rnorm(length(x1),0,1.4)
+set.seed(NULL) 
+```
+
+
+Fit model
+```{r}
+fit=lm(y~x1+x2)
+summary(fit)
+pairs(y~x1+x2)
+cor(x1,x2)
+```
+
+
+3d scatterplot
+```{r}
+#library(rgl)
+plot3d(x1, x2, y, size=10)
+
+#regression surface function
+surface<-function(x1,x2){fit$coeff[1]+fit$coeff[2]*x1+fit$coeff[3]*x2}
+
+#plot regression surface
+x1.surf=seq(min(x1),max(x1),length=20)
+x2.surf<-seq(min(x2),max(x2),length=2)
+y.surf=outer(x1.surf,x2.surf,surface)
+persp3d(x1.surf,x2.surf,y.surf,alpha=0.2,col='lightblue',add=TRUE)
+persp3d(x1.surf,x2.surf,y.surf,alpha=1,col='black',front = "lines", back = "lines",add=TRUE)
+```
+
+Residual diagnostics
+```{r}
+par(mfrow=c(2,3)) 
+plot(resid(fit)~fitted(fit),ylab="Residuals",xlab="Fitted",pch=19)
+abline(h=0,lty=2)
+
+#residuals vs. explanatory plots
+plot(resid(fit)~x1,ylab="Residuals",pch=19)
+abline(h=0,lty=2)
+
+plot(resid(fit)~x2,ylab="Residuals",pch=19)
+abline(h=0,lty=2)
+
+#normal Q-Q plot and histogram of residuals
+qqnorm(resid(fit),ylab="Residuals"); qqline(resid(fit),lty=2)
+hist(resid(fit),main="", xlab="Residuals",col='lightblue')
+
+
+```
+
+Shapiro-Wilk & Breusch-Pagant tests
+
+```{r}
+#Shapiro-Wilk test
+shapiro.test(resid(fit))
+
+#install.packages('lmtest') if haven't already
+#library('lmtest')
+bptest(fit)
+```
+
