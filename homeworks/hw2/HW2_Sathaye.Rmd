@@ -1,0 +1,92 @@
+---
+title: "Homework 2"
+subtitle: STAT 334
+author: "Ishaan Sathaye"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: readable
+    highlight: haddock
+    toc: true
+    toc_float: true
+    code_folding: hide  
+---
+
+```{r chunk setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval=TRUE,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+# Problem 5
+
+## Part (a)
+
+Definition: $H = X(X^TX)^{-1}X^T$
+
+Multiply by $X$:
+
+$HX = X(X^TX)^{-1}X^TX$
+
+Simplify: $(X^TX)^{-1}X^TX$: $HX = XI$
+
+-   Multiplying a matrix by its inverse equals the identity matrix.
+
+Therefore, $HX = XI = X$, showing that $X$ is invariant under $H$.
+
+## Part (b)
+
+Given: $H$ is idempotent, so $H^2 = H$
+
+$(I - H)^2 = (I - H)(I - H)$
+
+$(I - H)^2 = I - 2H + H^2$
+
+Use given $H^2 = H$: $(I - H)^2 = I - 2H + H = I - H$
+
+Therefore, $(I - H)^2 = I - H$, showing that $(I - H)$ is idempotent.
+
+## Part (c)
+
+$\hat{y} = X\hat{\beta}$
+
+Substitute equation for $\hat{beta} = (X^TX)^{-1}X^Ty$.
+
+$\hat{y} = X(X^TX)^{-1}X^Ty$
+
+Hat matrix $H = X(X^TX)^{-1}X^T$, so substitute into previous equation.
+
+Therefore, $\hat{y} = Hy$.
+
+## Part (d)
+
+Definition of residuals $e = y - \hat{y}$.
+
+Substitute part (c) $\hat{y} = Hy$:
+
+$e = y - Hy$.
+
+Distribute $y$ out:
+
+Therefore, $e = (I - H)y$.
+
+## Part (e)
+
+Given $e = (I - H)y$ from part (d).
+
+$e^T = y^T(I - H)^T$, by the property $(AB)^T = B^TA^T$.
+
+Since $(I - H)$ is symmetric, then $(I - H)^T = (I - H)$:
+
+$e^T = y^T(I - H)$
+
+Multiplying by $e$ gives $e^Te = y^T(I - H)(I - H)y$.
+
+Since $(I - H)$ is idempotent from part (b):
+
+$e^Te = y^T(I - H)y$
+
+By the hint $SSE = e^Te$.
+
+Therefore, $SSE = y^T(I - H)y$.
