@@ -195,7 +195,7 @@ confint(UOPgpa.fit,level=0.95)
 
 ```
 
-#Example 3: Advertising.txt \#
+# Example 3: Advertising.txt \#
 
 Import Data Save data file to same location as R script; then,
 
@@ -213,13 +213,13 @@ str(AdvData)
 Fit a linear model
 
 ```{r}
-
+Adv.fit = lm(Sales ~ TV + Radio, data = AdvData)
 ```
 
 Find the Confidence Intervals for coefficients
 
 ```{r}
-
+confint(Adv.fit, level = 0.95)
 
 ```
 
@@ -228,7 +228,7 @@ Find the Confidence Intervals for coefficients
 CI's for coefficients w/ Bonferonni Adjustment -*-*-*-* IMPORTANT: Make sure you substitute "???" by the correct code.-*-*-*-*
 
 ```{r}
-
+confint(Adv.fit, level = (1 - ((1 - 0.95)/3)))
 
 ```
 
@@ -239,6 +239,6 @@ Model summary: Sales\~TV+Radio\
 Tip: Look back to your code from 3a.
 
 ```{r}
-
+summary(Adv.fit)
 
 ```
