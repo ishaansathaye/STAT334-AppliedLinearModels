@@ -83,6 +83,7 @@ The betahat estimates exactly match the model estimates we found in part c.
 
 ```{r}
 H = X %*% solve(t(X) %*% X) %*% t(X)
+H
 ```
 
 # Problem 2
