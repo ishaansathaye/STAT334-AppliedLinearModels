@@ -1,0 +1,329 @@
+---
+title: "Homework 2"
+subtitle: STAT 334
+author: "Krishnanshu Gupta, Ishaan Sathaye, Sreshta Talluri"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: readable
+    highlight: haddock
+    toc: true
+    toc_float: true
+    code_folding: hide  
+---
+
+```{r chunk setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval=TRUE,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+```{r packages, include=FALSE}
+library(readxl)
+library(ggplot2)
+setwd( dirname( rstudioapi::getActiveDocumentContext( )$path ) )
+```
+
+# Problem 1
+
+## Part (a)
+
+```{r}
+#Import the Data
+mitchellData=read_excel("mitchell.xlsx")
+```
+
+## Part (b)
+
+```{r, fig.width=6, fig.height=4}
+plot(Temp~Month, data=mitchellData, pch=19, col='blue', 
+     xlab='month', ylab='temperature', main='Soil Temperature')
+```
+
+Adding the main argument in the plot() function creates a title for the plot.
+
+## Part (c)
+
+```{r}
+mitchell.fit=lm(Temp~Month, mitchellData)
+summary(mitchell.fit)
+```
+
+The least squares estimates for the intercept is approximately `r round(mitchell.fit$coefficients[1], 4)` and the slope is `r round(mitchell.fit$coefficients[2], 4)`. The value of R\^2 is approximately 0.0033.
+
+## Part (d)
+
+```{r}
+plot(Temp~Month, data=mitchellData, pch=19, col='blue', 
+     xlab='month', ylab='temperature', main='Soil Temperature')
+abline(mitchell.fit, col='darkred', lty=5)
+```
+
+## Part (e)
+
+```{r}
+plot(Temp~Month, data=mitchellData, pch=19, col='blue', 
+     xlab='month', ylab='temperature', main='Soil Temperature')
+intercept = summary(mitchell.fit)$coefficients[1]
+slope = summary(mitchell.fit)$coefficients[2]
+abline(intercept, slope, col='darkred', lty=5)
+```
+
+## Part (f)
+
+```{r}
+X = matrix(c(rep(1,204), mitchellData$Month), nrow=204)
+y = mitchellData$Temp
+betahat=solve(t(X) %*% X) %*% t(X) %*% y       
+betahat
+```
+
+The betahat estimates exactly match the model estimates we found in part c.
+
+```{r}
+H = X %*% solve(t(X) %*% X) %*% t(X)
+```
+
+# Problem 2
+
+## Part (a)
+
+```{r, fig.width=6, fig.height=4}
+sparrows = read_excel("Sparrows.xls")
+plot(Weight ~ WingLength, data = sparrows, pch = 5, col='blue', 
+     xlab='Wing Length', ylab='Weight', main='Weight vs. Wing Length')
+```
+
+## Part (b)
+
+```{r, fig.width=6, fig.height=4}
+sparrows.fit=lm(Weight ~ WingLength, sparrows)
+plot(Weight ~ WingLength, data = sparrows, pch = 5, col='blue', 
+     xlab='Wing Length', ylab='Weight', main='Weight vs. Wing Length')
+abline(sparrows.fit, col='brown', lty=)
+```
+
+There is a strong, positive, linear association between weight and wing length. As wing length increases, the weight of the sparrows tends to also increase.
+
+## Part (c)
+
+```{r}
+summary(sparrows.fit)
+```
+
+The estimated regression function or prediction equation is modeled by Weight = β0 + β1 \* Wing Length + ε, where β0 is the intercept and β1 is the slope.
+
+Based on the fitted model, Weight = `r round(sparrows.fit$coefficients[1], 4)` + `r round(sparrows.fit$coefficients[2], 4)` \* WingLength
+
+## Part (d)
+
+The slope coefficient is `r sparrows.fit$coefficients[2]`. For every 1 mm increase in wing length, the weight of the sparrow is expected to increase by approximately `r sparrows.fit$coefficients[2]` grams, after adjusting for treatment.
+
+## Part (e)
+
+The intercept coefficient is `r sparrows.fit$coefficients[1]`. This value is the predicted weight when the wing length is 0 mm. However, it's not possible for a sparrow to have a wing length of 0 mm so this intercept is not meaningful in this context.
+
+## Part (f)
+
+The coefficient of determination, or R\^2, is approximately 0.6139. This means that approximately 61.39% of the variation in weight is explained by the linear regression model with wing length.
+
+## Question 3
+
+### Part A
+
+```{r plastic}
+plastic <- read_xlsx("Plastic.xlsx")
+head(plastic)
+```
+
+```{r}
+# Run a linear regression model: Hardness vs. Time
+model <- lm(Hardness ~ Time, data = plastic)
+summary(model)
+```
+
+```{r}
+# Create a scatterplot with the regression line
+ggplot(plastic, aes(x = Time, y = Hardness)) +
+  geom_point() +  # This adds the scatterplot points
+  geom_smooth(method = "lm", col = "blue") +  # This adds the regression line
+  labs(x = "Time (hours)", y = "Hardness (Brinell units)", title = "Scatterplot of Hardness vs. Time with Regression Line") +
+  theme_minimal()
+```
+
+### Part B
+
+```{r}
+# Display the coefficients of the model
+coefficients(model)
+```
+
+The estimated regression function is: Hardness = 168.6 + 2.034375 \* (Time)
+
+### Part C
+
+```{r}
+summary_model <- summary(model)
+summary_model$r.squared
+```
+
+The R-squared value is 0.9731. Since the R-squared value is pretty high, it appears as though our model fits our data very well. For this example specifically, 97.31% of the variability in hardness can be explained by the linear relationship with time.
+
+### Part D
+
+```{r}
+# Create the design matrix
+# Column of ones for the intercept, and the 'time' column
+X <- cbind(1, plastic$Time)
+
+# Set column names for clarity
+colnames(X) <- c("Intercept", "Time")
+
+# Print the design matrix
+X
+```
+
+### Part E
+
+```{r}
+# Compute the hat matrix H = X(X'X)^{-1}X'
+H <- X %*% solve(t(X) %*% X) %*% t(X)
+H
+```
+
+### Part F
+
+If the hardness of plastic for case #1 were increased by 1 Brinell, the predicted hardness of plastic for case #1 would increase by 0.175 Brinell. This is because the leverage statistic / weight is 0.175 meaning that 17.5% of the predicted value is being explained by the first case.
+
+### Part G
+
+If the hardness of plastic for case #15 were increased by 1 Brinell, the predicted hardness of plastic for case #1 would decrease by 0.05 Brinell. This is because the leverage statistic / weight for case #15 is -0.05. Case #15 has a negative influence on case #1.
+
+### Part H
+
+```{r}
+Y <- plastic$Hardness
+
+# Compute the Least Squares Coefficient Vector (beta hat)
+beta_hat <- solve(t(X) %*% X) %*% (t(X) %*% Y)
+
+# Compute the Vector of Fitted Values (Y hat)
+Y_hat <- X %*% beta_hat
+
+# Compute the Vector of Residuals (e)
+residuals <- Y - Y_hat
+
+# Compute the Sum of Squares Error (SSE)
+SSE <- t(residuals) %*% residuals
+
+# Print the results
+print("Beta hat (Coefficients):")
+print(beta_hat)
+print("Y hat (Fitted Values):")
+print(Y_hat)
+print("Residuals:")
+print(residuals)
+print("Sum of Squares Error (SSE):")
+print(SSE)
+```
+
+# Problem 4
+
+## Part (a)
+
+An example where fitting a model with a zero intercept is justified is when we're modeling the relationship between the number of sales of a good to the quantity produced. If the good wasn't produced at all, which would be at quantity = 0, it's expected for the number of sales to also be 0.
+
+## Part (b)
+
+The expression for the sum of squared errors is:
+
+$SSE = \sum_{i=1}^{n}(Y_i - \hat{Y_i})^2$, where $Y_i$ are the observed values and $\hat{Y_i}$ are the predicted values.
+
+$\hat{Y_i} = β * x_i$ in this zero-intercept case, so we can simplify the sum of squared errors to $SSE = \sum_{i=1}^{n}(Y_i - β * x_i)^2$. $x_i$ are the predictor variable values and β is the estimated slope coefficient.
+
+## Part (c)
+
+```{r}
+airfare = read_excel("airfare.xls")
+airfare.fit = lm(price ~ distance - 1, data = airfare)
+summary(airfare.fit)
+```
+
+The prediction equation for the no-intercept least squares regression line: $\hat{Price}$ = `r airfare.fit$coefficients` \* Distance
+
+## Part (d)
+
+This intuitively makes sense because the presence of an intercept allows the model to capture the average relationship between the predictors (independent variables) and the target variable (dependent variable), even when the predictors are equal to zero. Without an intercept, the model is forced to go through the origin, which might not accurately represent the relationship between the variables.
+
+# Problem 5
+
+## Part (a)
+
+Definition: $H = X(X^TX)^{-1}X^T$
+
+Multiply by $X$:
+
+$HX = X(X^TX)^{-1}X^TX$
+
+Simplify: $(X^TX)^{-1}X^TX$: $HX = XI$
+
+-   Multiplying a matrix by its inverse equals the identity matrix.
+
+Therefore, $HX = XI = X$, showing that $X$ is invariant under $H$.
+
+## Part (b)
+
+Given: $H$ is idempotent, so $H^2 = H$
+
+$(I - H)^2 = (I - H)(I - H)$
+
+$(I - H)^2 = I - 2H + H^2$
+
+Use given $H^2 = H$: $(I - H)^2 = I - 2H + H = I - H$
+
+Therefore, $(I - H)^2 = I - H$, showing that $(I - H)$ is idempotent.
+
+## Part (c)
+
+$\hat{y} = X\hat{\beta}$
+
+Substitute equation for $\hat{beta} = (X^TX)^{-1}X^Ty$.
+
+$\hat{y} = X(X^TX)^{-1}X^Ty$
+
+Hat matrix $H = X(X^TX)^{-1}X^T$, so substitute into previous equation.
+
+Therefore, $\hat{y} = Hy$.
+
+## Part (d)
+
+Definition of residuals $e = y - \hat{y}$.
+
+Substitute part (c) $\hat{y} = Hy$:
+
+$e = y - Hy$.
+
+Distribute $y$ out:
+
+Therefore, $e = (I - H)y$.
+
+## Part (e)
+
+Given $e = (I - H)y$ from part (d).
+
+$e^T = y^T(I - H)^T$, by the property $(AB)^T = B^TA^T$.
+
+Since $(I - H)$ is symmetric, then $(I - H)^T = (I - H)$:
+
+$e^T = y^T(I - H)$
+
+Multiplying by $e$ gives $e^Te = y^T(I - H)(I - H)y$.
+
+Since $(I - H)$ is idempotent from part (b):
+
+$e^Te = y^T(I - H)y$
+
+By the hint $SSE = e^Te$.
+
+Therefore, $SSE = y^T(I - H)y$.
