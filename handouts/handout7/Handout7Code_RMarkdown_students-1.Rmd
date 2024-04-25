@@ -150,29 +150,45 @@ summary(AnimalBrains)
 Linear model (body \~ geration)
 
 ```{r}
-
-  
-
+plot(body~gestation,data=AnimalBrains,pch=19)
+animal.fit=lm(body~gestation,data=AnimalBrains)
+abline(animal.fit,col='blue')
+summary(animal.fit)
 ```
 
 Original untransformed.\
 Plots to examine whether assumptions are met.
 
 ```{r}
-
-
-
+par(mfrow=c(2,2))
+plot(body~gestation,data=AnimalBrains,pch=19)
+animal.fit=lm(body~gestation,data=AnimalBrains)
+abline(animal.fit,col='blue')
+summary(animal.fit)
+plot(animal.fit,c(1,2))
+hist(resid(animal.fit),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
 ```
 
 Identify transformations.\
 Start by transforming Y going down the ladder, then try transforming X.
 
 ```{r}
-
+plot(log(body,2)~log(gestation,2),data=AnimalBrains,pch=19)
+animal.fit1=lm(log(body,2)~log(gestation,2),data=AnimalBrains)
+abline(animal.fit1,col='blue')
+summary(animal.fit1)
 ```
 
 ```{r}
+par(mfrow=c(2,2))
+plot(log(body,2)~log(gestation, 2),data=AnimalBrains, pch=19, ylab='log(body)', xlab='log(')
 
+abline(animal.fit1,col='blue')
+plot(animal.fit1,c(1,2))
+
+hist(resid(animal.fit1),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
 ```
 
 ```{r}
@@ -203,9 +219,8 @@ Matrix scatter & correlation matrix LOGGED variables.Tip: use the "log" function
 
 ```{r}
 
-
-
-
+pairs(log(AnimalBrains[,c(3,2,4,5)]))
+cor(log(AnimalBrains[,c(3,2,4,5)]))
 ```
 
 ### 2(h)
@@ -214,7 +229,8 @@ Model: log(body)\~log(litter)+log(gestation)
 
 ```{r}
 
-
+fit.body=lm(log(body)~log(litter)+log(gestation),data=AnimalBrains)
+summary(fit.body)
 
 
 ```
