@@ -1,0 +1,512 @@
+---
+title: "Homework 3"
+subtitle: STAT 334
+author: "Krishnanshu Gupta, Ishaan Sathaye, Sreshta Talluri"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: readable
+    highlight: haddock
+    toc: true
+    toc_float: true
+    code_folding: show
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r chunk setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval=TRUE,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+```{r packages, include=FALSE}
+library(readxl)
+setwd( dirname( rstudioapi::getActiveDocumentContext( )$path ) )
+```
+
+# Problem 2
+
+## Part (a)
+
+```{r}
+#Import the Data
+Hitters = read_excel("Hitters.xls")
+str(Hitters)
+Hitters=data.frame(Hitters[,-1], row.names = Hitters$Name)
+head(Hitters)
+```
+
+## Part (b)
+
+### (i)
+
+```{r, fig.width=6, fig.height=4}
+Hitters['Barry Bonds', ]
+```
+
+### (ii)
+
+```{r}
+Hitters['Ken Griffey', ]
+ken_salary = Hitters['Ken Griffey', 'Salary']
+barry_salary = Hitters['Barry Bonds', 'Salary']
+
+paste("Ken Griffey's salary is:", ken_salary, ", and Barry Bonds' salary is:", barry_salary)
+```
+
+Based on the output, Ken Griffey has a larger salary than Barry Bonds.
+
+## Part (c)
+
+```{r}
+Hitters_minusWalks = Hitters[, -6]
+head(Hitters_minusWalks)
+```
+
+## Part (d)
+
+### (i)
+
+Andy Allanson's salary is NA.
+
+### (ii)
+
+```{r}
+which(is.na(Hitters), arr.ind=TRUE)
+sum(is.na(Hitters$Salary))
+```
+
+There are 59 salaries missing.
+
+### (iii)
+
+```{r}
+Hitters.NoNA = na.omit(Hitters)
+sum(is.na(Hitters.NoNA$Salary))
+```
+
+Now there are 0 missing (NA) values in the salaries column, so the na.omit() function was able to omit/remove the rows with missing salaries.
+
+## Part (e)
+
+```{r, fig.width=7, fig.height=3}
+plot(log(Salary,2)~Runs, data=Hitters.NoNA, pch=19)
+salary.fit=lm(log(Salary,2)~Runs, data=Hitters.NoNA)
+abline(salary.fit, col='blue')
+
+par(mfrow=c(1,3))  #plot in 1x3 grid   
+plot(resid(salary.fit)~fitted(salary.fit), ylab='Residuals', xlab='Fitted')
+abline(h=0, lty=2)
+qqnorm(resid(salary.fit), ylab='Residuals'); 
+qqline(resid(salary.fit), lty=2)
+hist(resid(salary.fit), main='', col='lightblue', xlab='Residuals')
+par(mfrow=c(1,1))
+```
+
+## Part (f)
+
+### (i)
+
+```{r, fig.width=7, fig.height=4}
+library(MASS) 
+par(mfrow=c(1,2))
+boxcox(Salary~Runs, data=Hitters.NoNA, plotit=TRUE, lambda=seq(-2,3,length=100))
+boxcox(Salary~Runs, data=Hitters.NoNA, plotit=TRUE, lambda=seq(-.1,.4,length=100))
+par(mfrow=c(1,1))
+```
+
+### (ii)
+
+To create a one-by-four plot grid, we'd use the command 'par(mfrow=c(1,4))', which creates the intended layout of 1 row and 4 columns.
+
+## Part (g)
+
+### (i)
+
+```{r}
+confint(salary.fit, level=0.95)
+```
+
+### (ii)
+
+To get the 90% confidence interval, we'd use the command: 'confint(salary.fit, level=0.90)', where we just change the level to 0.90 compared to part I.
+
+# Problem 3
+
+```{r stopping}
+stopping <- read.table("./stopping.txt", header=TRUE, sep="\t")
+head(stopping)
+```
+
+## Part (a)
+
+```{r}
+par(mfrow=c(2,2))
+plot(dist~speed,data=stopping,pch=19)
+stopping.fit0=lm(dist~speed,data=stopping)
+abline(stopping.fit0,col='blue')
+summary(stopping.fit0)
+plot(stopping.fit0,c(1,2))
+hist(resid(stopping.fit0),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+(i) Linearity is slightly violated as there is a slight trend/curve in the residuals vs. fitted graph. There seems to be unequal variances in the data. Normality seems fine (however, few points in the qq plot which are not on the line).
+
+(ii) Our analysis suggests changing the power in the response variable by decreasing the power. We are thinking a square root or log transformation might help for this particular data.
+
+## Part (b)
+
+First Transformation: sqrt(y)
+
+```{r}
+par(mfrow=c(2,2))
+plot(sqrt(dist)~speed,data=stopping, pch=19, ylab='sqrt(dist)')
+
+stopping.fit1=lm(sqrt(dist)~speed,data=stopping)
+abline(stopping.fit1,col='blue')
+plot(stopping.fit1,c(1,2))
+
+hist(resid(stopping.fit1),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+This model already seems much better. Linearity is not-violated. There appears to be an equal variance. Normality is good, but not the best. So, we can try another transformation.
+
+Second Transformation: log(y)
+
+```{r}
+par(mfrow=c(2,2))
+plot(log(dist)~speed,data=stopping, pch=19, ylab='log(dist)')
+
+stopping.fit2=lm(log(dist)~speed,data=stopping)
+abline(stopping.fit2,col='blue')
+plot(stopping.fit2,c(1,2))
+
+hist(resid(stopping.fit2), main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+This model seems much worse. Linearity is violated. There seems to be unequal variance in the residual analysis. Normality also seems to be violated.
+
+From the residual analysis', the sqrt transformation for the response variable (y) seems to be the better model for this data. As we decrease the power for the y variable, the models seem to be getting worse.
+
+We should also test to see if transforming the x variable results in a better model.
+
+Third Transformation: sqrt(x)
+
+```{r}
+par(mfrow=c(2,2))
+plot(dist~sqrt(speed),data=stopping, pch=19, xlab='sqrt(speed)')
+
+stopping.fit3=lm(dist~sqrt(speed),data=stopping)
+abline(stopping.fit3,col='blue')
+plot(stopping.fit3,c(1,2))
+
+hist(resid(stopping.fit3),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+This model also seems to be worse than the first transformation one. Linearity is violated. There is unequal variance in the residual analysis. Normality also is violated (from the histogram).
+
+**Conclusion:** The best transformation seems to be a sqrt transformation in just the y (response) variable.
+
+## Part (c)
+
+According to this [source](https://www.physicsclassroom.com/mmedia/energy/cs.cfm), the equation between speed and stopping distance is 0.5 \* m \* v\^2 = F \* d. This means that dist is proportional to speed/velocity squared meaning that speed is proportional to sqrt(distance). This is the same model that we found to be best in part b.
+
+## Part (d)
+
+### (i)
+
+Box-Cox Transformation
+
+```{r}
+library(car)
+powerTransform(dist~speed,data=stopping)
+```
+
+The Box-Cox procedure recommends a power of 0.4146 for the transformation.
+
+### (ii)
+
+```{r}
+library(MASS)
+boxcox(dist~speed,data=stopping,lambda = seq(0.2, 0.8, by = 0.01))
+```
+
+The Box-Cox procedure produces an interval of around 0.29 to 0.54 which fits with our sqrt model (as sqrt is power of 0.5).
+
+## Part (e)
+
+### (i)
+
+```{r}
+par(mfrow=c(2,2))
+plot(I(dist^0.4146443)~speed,data=stopping, pch=19, ylab='dist^0.4146433')
+
+stopping.boxcox=lm(I(dist^0.4146443) ~ speed, data = stopping)
+abline(stopping.boxcox,col='blue')
+plot(stopping.boxcox,c(1,2))
+
+hist(resid(stopping.boxcox),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
+```
+
+For this model and based on these plots, linearity is not violated, variance appears to be equal, and normality seems to not be violated.
+
+### (ii)
+
+```{r}
+shapiro.test(resid(stopping.boxcox))
+```
+
+Since the p-value is 0.3909 which is greater than the significance level of 0.05, we fail to reject the null hypothesis and therefore do not have sufficient evidence to conclude that the data deviates from a normal distribution (at out given significance levels).
+
+```{r}
+library(lmtest)
+bptest(stopping.boxcox)
+```
+
+Since the p-value is 0.3434 which is greater than the significance value of 0.05, we fail to reject the null hypothesis and therefore do not have sufficient evidence to conclude that the variance varies across our regression model.
+
+# Problem 4
+
+## Part (a)
+
+```{r}
+sweetnessData = read.table('sweetness.txt', header=TRUE, sep="\t")
+```
+
+### (i)
+
+```{r}
+plot(SweetIndex~Pectin,data=sweetnessData,pch=19)
+sweet.fit=lm(SweetIndex~Pectin,data=sweetnessData)
+abline(sweet.fit,col='blue')
+```
+
+### (ii)
+
+```{r}
+summary(sweet.fit)
+```
+
+Equation for the least squares line is y = 6.252 - 0.002x, where x is the pectin in parts per million and y is the sweet index.
+
+## Part (b)
+
+#### Hypotheses:
+
+$H_0: \beta_1 = 0$ (no relationship between the sweetness and the amount of pectin)
+
+$H_a: \beta_1 < 0$ (significant negative linear relationship between sweetness and amount of pectin)
+
+This test is one-sided because we are only interested in the negative relationship between sweetness and pectin.
+
+#### Test Statistic
+
+```{r}
+summary(sweet.fit)$coefficients
+```
+
+The test statistic is -2.554.
+
+#### Degrees of Freedom
+
+The degrees of freedom is 22.
+
+#### P-Value
+
+```{r}
+summary(sweet.fit)$coefficients[2,4]
+```
+
+The p-value is 0.0181.
+
+#### Conclusion
+
+Since the p-value is less than 0.05, we reject the null hypothesis that there is no relationship between sweetness index and the amount of pectin. There is sufficient evidence to suggest that there is a significant negative linear relationship between sweetness and the amount of pectin.
+
+## Part (c)
+
+### (i)
+
+Determine 90% confidence interval for the true slope of the line (i.e. population slope).  **(i)** Do this both "by-hand" (using matrix multiplication) C = ((X^T)^ X)\^-1 [since SE(beta-hat) = s\*sqrt(C_2,2)] and the qt() function for the critical value
+
+```{r}
+X <- model.matrix(sweet.fit)
+C <- solve(t(X) %*% X)
+s <- summary(sweet.fit)$sigma
+se <- s*sqrt(C[2,2])
+t <- qt(1-0.1/2, 22)
+lower <- coef(sweet.fit)[2] - t*se
+upper <- coef(sweet.fit)[2] + t*se
+lower
+upper
+```
+
+### (ii)
+
+```{r}
+confint(sweet.fit, level = 0.9)
+```
+
+### (iii)
+
+Lower bound is -0.003864436 and upper bound is -0.0007568157. We are 90% confident the the expected decrease in the sweet index for each 1 ppm increase in pectin falls between -0.003864436 and -0.0007568157.
+
+## Part (d)
+
+```{r}
+summary(sweet.fit)$coefficients[1,1]
+```
+
+I think it would not be appropriate to do a significance test for the population intercept because the intercept is not meaningful in this context. The intercept is located at (0, 6.252, which is not a meaningful value in this context since it would mean that when there is no pectin then the sweetness index is at 6.252. This would also be extrapolating the data, because we would be predicting sweetness index for pectin values that are not in the data set.
+
+## Part (e)
+
+$H_0: \beta_1 = -0.005$ (true slope should be -0.005)
+
+$H_A: \beta_1 \neq -0.005$ (true slope is not -0.005)
+
+#### Test Statistic
+
+```{r}
+t <- (coef(sweet.fit)[2] - (-0.005))/summary(sweet.fit)$coefficients[2, 2]
+t
+```
+
+The test statistic is 2.97.
+
+#### Degrees of Freedom
+
+n = 22
+
+#### P-Value
+
+```{r}
+p_val <- 2 * pt(q=t, 22, lower.tail = FALSE)
+p_val
+```
+
+The p-value is 0.007.
+
+#### Conclusion
+
+Since the p-value is low (\< 0.01) we reject the null hypothesis. There is very strong evidence to suggest that the true slope is not -0.005.
+
+## Part (f)
+
+### A
+
+```{r}
+sweet_minusR1= sweetnessData[-1, ]
+plot(SweetIndex~Pectin,data=sweet_minusR1,pch=19)
+sweetf.fit=lm(SweetIndex~Pectin,data=sweet_minusR1)
+abline(sweetf.fit,col='blue')
+```
+
+#### (I)
+
+```{r}
+coef(sweet.fit)[2]
+coef(sweetf.fit)[2]
+```
+
+The slope did change as it is now -0.0026917 while with the row it was -0.002310626, so it got steeper and more negative just by a little.
+
+#### (II)
+
+```{r}
+summary(sweet.fit)$r.squared
+summary(sweetf.fit)$r.squared
+```
+
+The $R^2$ value is 0.3627 while with the row it was 0.2286. The value increased which means that the correlation between the two variables is stronger without the row.
+
+#### (III)
+
+```{r}
+summary(sweet.fit)$sigma
+summary(sweetf.fit)$sigma
+```
+
+The sigma value did change as it decreased from 0.214 to 0.182, which means that the points are closer to the regression line.
+
+### B
+
+```{r}
+sweet_minusR11= sweetnessData[-11, ]
+plot(SweetIndex~Pectin,data=sweet_minusR11,pch=19)
+sweetf2.fit=lm(SweetIndex~Pectin,data=sweet_minusR11)
+abline(sweetf2.fit,col='blue')
+```
+
+#### (I)
+
+```{r}
+coef(sweet.fit)[2]
+coef(sweetf2.fit)[2]
+```
+
+The slope did change as it is now -0.002785872 while with the row it was -0.002310626, so it got steeper and more negative just by a little.
+
+#### (II)
+
+```{r}
+summary(sweet.fit)$r.squared
+summary(sweetf2.fit)$r.squared
+```
+
+The $R^2$ value is 0.1989855 while with the row it was 0.2286. The value decreased which means that the correlation between the two variables is weaker without the row.
+
+#### (III)
+
+```{r}
+summary(sweet.fit)$sigma
+summary(sweetf2.fit)$sigma
+```
+
+The sigma value did change as it increased from 0.214 to 0.218, which means that the points are further from the regression line.
+
+## Part (g)
+
+### (i)
+
+The p-value of the test is 14/1000 which is 0.014. This represents the probability of obtaining a sample slope as extreme as 0.0023.
+
+### (ii)
+
+This is a two-sided test since $\beta_1 \neq 0$ is the alternative hypothesis where there is an association between the variables. We have fairly strong evidence of a linear association between the sweetness index and the amount of pectin. (p \< 0.05)
+
+# Problem 5
+
+## Part (a)
+
+```{r}
+COVID = read.csv("COVID.csv")
+
+COVID$log_Deaths = log2(COVID$Deaths.per.M)
+COVID$log_Cases = log2(COVID$Cases.per.M)
+
+plot(log_Deaths ~ log_Cases, data = COVID, pch = 20, xlab = "log2(Cases.per.M)", 
+     ylab = "log2(Deaths.per.M)", main = "")
+
+COVID.fit <- lm(log_Deaths ~ log_Cases, data = COVID)
+abline(COVID.fit, col = "red")
+```
+
+```{r}
+summary(COVID.fit)
+```
+
+## Part (b)
+
+```{r}
+confint(COVID.fit, level = 0.95)
+```
+
+We are 95% confident that the median increase in Deaths per million residents for every doubling of Cases per million is between $2^{0.6793}$ (1.6013) and $2^{0.8732}$ (1.8317).
