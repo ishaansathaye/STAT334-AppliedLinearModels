@@ -1,0 +1,75 @@
+---
+title: "Handout8BCode_RMarkdown_students"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 2: SuperPerf.txt
+
+Import Data
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+SuperPerf=read.table('SuperPerf.txt',header=T,sep='\t')
+str(SuperPerf)
+head(SuperPerf)
+```
+
+### 2(a,c,e)
+
+Models
+
+```{r}
+summary(lm(overall.rating~no.special,data=SuperPerf))
+```
+
+### 2(g)
+
+Summary Note: \~. fit the model with ALL variables
+
+```{r}
+summary(lm(overall.rating~.,data=SuperPerf)) 
+```
+
+### 2(h)
+
+ANOVA type I SS Note: \~. fit the model with ALL variables
+
+```{r}
+anova(lm(overall.rating~.,data=SuperPerf))
+```
+
+ANOVA type II SS
+
+```{r}
+library(car)
+Anova(lm(overall.rating~.,data=SuperPerf),type='II')
+```
+
+### 2(m)
+
+Reduced Model
+
+```{r}
+anova(lm(overall.rating~handles.complaints+oppty.to.learn,data=SuperPerf))
+```
+
+### 2(n-o)
+
+Partial F test "by hand"
+
+```{r}
+(F=(105.65/4)/49.96)
+pf(0.529,4,23,lower.tail=F)
+
+```
+
+### 2(p)
+
+Partial F test in R
+
+```{r}
+anova(lm(overall.rating~handles.complaints+oppty.to.learn,data=SuperPerf),
+      lm(overall.rating~.,data=SuperPerf))
+```
