@@ -1,0 +1,161 @@
+\documentclass[8pt]{extarticle}
+
+\usepackage{color,fancyhdr,ifthen,amssymb,amsfonts,amsmath}
+\usepackage{geometry}
+\usepackage{lipsum}
+\usepackage{enumitem}
+\usepackage{eso-pic}
+\usepackage{blindtext}
+
+\geometry{
+    top=0.3in,
+    bottom=0in,
+    left=0.1in,
+    right=0.1in,
+}
+
+\setlist{nolistsep} %\itemsep0em in itemize
+
+\pagestyle{fancy}
+\fancyhf{} % Clear header and footer
+\renewcommand{\headrulewidth}{0pt} % Remove header rule
+\renewcommand{\footrulewidth}{0pt} % Remove footer rule
+\linespread{1.2} % Adjust the line spacing here
+\setlength{\headsep}{0.05in} % Adjust the space between header and text
+\setlength{\footskip}{0.1in} % Adjust the space between text and footer
+\parindent=0in
+\flushbottom % Ensure text is aligned with both top and bottom margins
+
+% \newcommand{\head}[3]{\lhead{#1}\chead{#2}\rhead{\ifthenelse{\isodd{
+%     \thepage}}{Ishaan Sathaye
+%  {\hspace{.01in}}}{}}}
+
+% \head{Midterm 1 Exam Cheat Sheet}{STAT 334}
+
+\begin{document}
+
+% Halfway line for Midterm 1:
+% \AddToShipoutPictureBG{
+% \AtTextCenter{\hspace{-0.6\textwidth}\rule{1.2\textwidth}{0.5pt}}}
+
+\textit{\textbf{\underline{1:}}}
+\textbf{Scatterplot:} form/shape, direction (positive/negative), strength (
+points follow recognizable form), unusual features (do not fit general trend).
+\textbf{Association:} look at scales (might be misleading).
+\textbf{PC Coeff:} strength of linear association; -1 to 1; 0 means no linear; r
+does not change if variables are rescaled.
+\textit{\textbf{\underline{2:}}}
+\textbf{Residual:} observed - predicted; $e_i = y_i - \hat{y}_i$.
+\textbf{Least Squares:} minimize SSE: $\sum_{i=1}^{n} e_i^2$.
+\textbf{Coefficients:} determined by taking derivative of the SSE and solving
+for the coeffs when setting to 0.
+\textbf{Interp Coeff:} slope coeff as the pred change in Y associated with a one
+-unit change in $X_i$, holding all other predictors constant; intercept as the 
+predicted Y value when all preds are 0 (could be nonsensical).
+\textbf{$R^2$:} coeff of determination; $ = \frac{SSE(\bar{y}) - SSE(\hat{y})}{SSE(\bar{y})}$;
+unexplained variation in y / total var in y (look at points distribution).
+\textbf{$R^2$ Interp:} $R^2 * 100$ is the percent reduction in SSE by taking into
+account the predictors; percentage of variation in Y explained by the regression 
+function with predictors; range is 0 to 1 and 1 if perfect predictions; $R^2 = r^2$
+for simple linear regression.
+\textit{\textbf{\underline{3:}}}
+\textbf{Least Squares Estimate of $\beta$:} $SSE = \sum_{i=1}^{n} e^2_i = e^Te$;
+$\hat{\beta} = (X^TX)^{-1}X^Ty$; $\hat{y} = X\hat{\beta} = Hy$.
+\textbf{Hat Matrix:} $H = X(X^TX)^{-1}X^T$; symmetric and $h_{ij}$ describes 
+the weight each of the values in the ith row of H have on the predicted value 
+of $y_i$.
+\textbf{Contributions:} $h_{ij}y_j$ is the actual contribution of j makes to the 
+value $\hat{y_i}$.
+\textit{\textbf{\underline{4:}}}
+\textbf{MSE:} $s^2 = \frac{SSE}{n - p}$; $s$ or RMSE is the typical prediction 
+error; expect 95\% of observed y values to lie roughly within $2s$ of predicted 
+values; called \textbf{residual standard error in R}.
+\textbf{s vs $R^2$:} both small s and large $R^2$ is the goal.
+\textit{\textbf{\underline{5:}}}
+\textbf{Perm. Test:} is there a relation between y and x find test stat that 
+measures association for all possible perms of the resp var and compute the prop.
+of times an observed test stat as extreme as the one from original sample; p-value 
+from the graph by counting.
+\textbf{p-value:} probability of obtaining a result (test stat) at least as extreme 
+as the one observed, if the null were true; $<$ 0.1 is some, $<$ 0.05 is fairly 
+strong, $<$ 0.01 is very strong, $<$ 0.001 is extremely strong; small p-value 
+means result is unlikely to have occurred by change alone, if the null were true 
+making it statistically significant.
+\textbf{Inference on $\beta_j$:} $t = \frac{\hat{\beta}_j - \beta_j}{SE(\hat{\beta}_j)}$;
+$ 1 - \alpha$ confidence limits: $\hat{\beta}_j \pm t_{n-p, \alpha/2}SE(\hat{\beta}_j)$.
+\textbf{Standard Error of $\beta$:} $SE(\hat{\beta}_j) = \sqrt{MSE(C_{j+1}C_{j+1})}$ 
+where C is the jth column of $(X^TX)^{-1}$; \texttt{summary(fit)} gives null = 0
+and alternative $\neq$ 0; \texttt{model.matrix(fit)} gives design matrix X.
+\textbf{One Sided H:} \texttt{pt()} with lower tail false gives area to the right
+(t $>$ 0) and true gives left tail area.
+\textbf{68/95/99.7 Rule:} values like within 1/2/3 std dev of mean.
+\textbf{t-value:} t $>$ 2 or $<$ -2 means results are significant.
+\textbf{Critical Value:} \texttt{qt(p, df)} gives t value for area p to the left of it;
+90/95/99 percent CI is p = 0.95/0.975/0.995.
+\textbf{CI Slope Interp:} We are 95\% confident that the expected \textit{change} 
+in the \textit{response} for each one \textit{unit} increase in the \textit{$X_i$}
+falls between l and u, (after adjusting for other predictors in the model) 
+\textbf{use only when interpreting about the effect of one predictor with multiple
+predictors, say for conclusions too in inference tests}.
+\textbf{Bonferroni:} $1 - \frac{1-C}{g}$ where C is the confidence level and g is
+the number of coefficients being tested; instead of $\alpha/2$ in each tail 
+use $\frac{\alpha}{2g}$ in each tail; want each individual confidence to be 
+above C in order for the joint level to be above C; \textbf{only for intervals}.
+\textbf{Joint CI Interp:} We are (at least) 95\% confident that all intervals 
+correctly capture the population parameters.
+\underline{6:}
+\textbf{FINE Assumptions:} Form, Independence, Normality, Equal Variance;
+Form: expect linear form, Independence: errors are independent (in data 
+description), Normality: errors follow a normal dist, Equal Variance: variance 
+of errors is the same.
+\textbf{Plots:} Form: residuals vs fitted (no trend/curve) or residuals vs each 
+$X_i$ \textbf{for multiple predictors}; Equal Variance: residuals vs fitted 
+(no fan shape); Normality: qq plot (no big departure from straight line) or 
+histogram (no big skew); Independence: look at residuals vs observations 
+number (want to be random).
+\textbf{Formal tests:} wilks $\Rrightarrow$ normality, pagan $\Rrightarrow$ equal 
+variance, low p means violated.
+\underline{7:}
+\textbf{Interp of Slope:} only log transforms can be restated in terms of the 
+original vars, preds can always be restated in terms of original vars.
+\textbf{Transforming} Y: non-linearity, non-constant variance, and non-normality; 
+X: non-linearity, high leverage, influence; changing space = correct problems.
+\textbf{Ladder of Powers:} p = 2, 1, 0.5, 0, -0.5, -1, -2; y* = $y^2, y,
+\sqrt{y}, 1/\sqrt{y}, 1/y, 1/y^2$; right to become better; log and sqrt not
+defined for zero or negative values, so transform $y/x + c$, where c makes all 
+values $\geq 1$.
+\textbf{Strategies:} skewed residuals: right skew is y down, left skew is y up;
+residual var inc. as x incr: y down, decr as x incr: y up; non-linear: correct 
+non-normal and unequal var then y, only non-linear then x.
+\textbf{Non-linearity Bulges Point:} up and left is y up or x down; up and 
+right is y up or x up; down and left is y down or x down; down and right is y 
+down or x up.
+\textbf{Interp of X Transform:} If we multiply $x_i$ by b (chosen log base) we 
+predict a change of $\hat{\beta_i}$ in the mean value of y after adjusting for 
+the other vars in model.
+\textbf{Interp of Y Transform:} Each one unit change in $x_i$ changes the 
+predicted median value of y by a factor of $b^{\hat{\beta_i}}$ after \dots.
+\textbf{Interp of Both:} A c-fold change in $x_i$ changes the predicted median 
+value of y by a factor of $c^{\hat{\beta_i}}$ after \dots.
+\textbf{Non-log Transform:} Each increase of one in $1/x_i$ is associated with 
+an increase of $\hat{\beta_i}$ in predicted $\sqrt{y}$.
+\textbf{Median:} median instead of mean because $E[log(Y)] \neq log[E(Y)]$ but 
+for median it is true.
+\textbf{Box-Cox:} round lambda to nearest 0.5.
+\textbf{Matrix Scatterplot:} don't reflect preds act jointly.
+
+% \textit{Midterm Notes}
+% \begin{itemize}
+%     \item 12 open ended questions and 10 MC
+%     \item issue with linearity with residuals vs fitted by looking at the form
+%     \item 2 matrix problems (hat matrix)
+%     \item 5 questions on the assumptions
+%     \item transformation question is the hardest (worth 6 points)
+%     \item after adjusting \dots when multiple predictors
+%     \item given $R^2$ figure out s (typical prediction error) if hidden 
+%     then find the numbers to calculate each thing
+%     \item hard question on the bonferoni
+%     \item know how to calculate a p-value (shade the area) (permutation test handout)
+% \end{itemize}
+
+\end{document}
