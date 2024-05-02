@@ -1,0 +1,385 @@
+---
+title: "Handout10Code_RMarkdown_STUDENTS-ANSWERS"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 1: NBA18-19.txt
+
+Import Data
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+NBAData0 = read.table('NBA18-19.txt', header=TRUE, sep="")
+str(NBAData0)
+```
+
+Subset data to include point guards only
+
+```{r}
+NBAData=subset(NBAData0, PS=='PG')
+head(NBAData)
+```
+
+### 1(a)
+
+Histogram + Boxplots + Outliers
+
+```{r}
+par(mfrow=c(2,1))
+with(NBAData, hist(PTS,col='lightblue', main = ""))
+with(NBAData, boxplot(PTS,col='lightblue', horizontal = TRUE, xlab = "PTS"))
+par(mfrow=c(1,1))
+
+```
+
+Those players with PTS\>2000
+
+```{r}
+cbind(NBAData$Player[NBAData$PTS>2000],
+      NBAData$PTS[NBAData$PTS>2000])
+
+```
+
+### 1(c-d)
+
+Create variables eff48m and MPG
+
+```{r}
+NBAData$eff48m=(NBAData$PTS + NBAData$TR + NBAData$AS + NBAData$ST + 
+        NBAData$BK - (NBAData$FGA-NBAData$FGM) - 
+        (NBAData$FTA-NBAData$FTM) - NBAData$TO)*48/NBAData$Min
+NBAData$MPG=NBAData$Min/NBAData$GP
+head(NBAData)
+```
+
+Model
+
+IMPORTANT: Do not forget to delete the "\#" so you can actually run the code.
+
+```{r}
+NBA.fit0=lm(eff48m ~ MPG, data = NBAData)
+summary(NBA.fit0)
+
+
+
+```
+
+Fitted line plot eff48m vs MPG
+
+```{r}
+par(mfrow=c(1,3))
+plot(eff48m~MPG, pch=19,data=NBAData)
+abline(NBA.fit0,col='blue')
+plot(NBA.fit0,c(1,2))
+```
+
+### 1(e-f)
+
+```{r}
+par(mfrow=c(1,1))
+plot(eff48m~MPG, pch=19,data=NBAData)
+abline(NBA.fit0,col='blue')
+#text labels
+text(NBAData$MPG[c(33,45,83,103,108)], NBAData$eff48m[c(33,45,83,103,108)],
+     label=NBAData$Player[c(33,45,83,103,108)],pos=c(4,2,4,4,2),cex=0.9)
+```
+
+```{r}
+NBAData[NBAData$Player == "ulis,tyler",]
+
+```
+
+### 1(g)
+
+Subset data to include only full time point guards
+
+```{r}
+NBAFull=subset(NBAData,Min>500 & MPG>6.09)
+str(NBAFull)
+
+```
+
+### 1(h1)
+
+Model
+
+IMPORTANT: Do not forget to delete the "\#" so you can actually run the code.
+
+```{r}
+NBA.fit=lm(eff48m ~ MPG, data = NBAFull)
+summary(NBA.fit)
+
+
+```
+
+Fitted line plot eff48m vs MPG & Residual Diagnostics
+
+```{r}
+par(mfrow=c(1,3))
+plot(eff48m~MPG, data=NBAFull,pch=19)
+abline(NBA.fit,col='blue')
+id=c(19, 31, 37, 43, 79)
+text(NBAFull$MPG[id],NBAFull$eff48m[id],label=NBAFull$Player[id],pos=c(4,2,2,2,2),cex=0.6)
+plot(NBA.fit, c(1,2))
+par(mfrow=c(1,1))
+```
+
+### 1(h2)
+
+Note: we chose MPG=24.7 b/c its the mean MPG
+
+```{r}
+mean(NBAFull$MPG)
+```
+
+Predict efficiency of player with avg. MPG (ie. MPG=24.7)
+
+(1) Algebraic
+
+```{r}
+NBA.fit$coefficients[1] + NBA.fit$coefficients[2]*24.7
+
+
+```
+
+(2) Matrix\
+    tip1: use matrix multiplication.\
+    tip2: use your fitted model called NBA.fit and get the coefficients from this model using "NBA.fit\$XXXX".
+
+IMPORTANT: Do not forget to delete the "\#" so you can actually run the code.
+
+```{r}
+c(1,24.7)%*%c(NBA.fit$coefficients[1],NBA.fit$coefficients[2])
+
+
+```
+
+(3) Ysing predict()
+
+IMPORTANT: Do not forget to delete the "\#" so you can actually run the code.
+
+```{r}
+predict(NBA.fit, data.frame(MPG=24.7))
+
+
+```
+
+Suppose we followed all point guards who play 24.7 minutes per game. Predict the average efficiency for all these players (one value).
+
+```{r}
+mean(predict(NBA.fit, data.frame(MPG=24.7)))
+```
+
+### 1(k)
+
+View Westbrook's stats
+
+```{r}
+NBAFull[NBAFull$Player=="westbrook,russel",]
+
+```
+
+Predict efficiency of player with MPG=36.1 (Westbrook's MPG) using algebra.
+
+```{r}
+
+NBA.fit$coefficients[1] + NBA.fit$coefficients[2]*36.1
+
+
+```
+
+Predict efficiency of player with MPG=36.1 (Westbrook's MPG) using predict()
+
+```{r}
+c(1,36.1)%*%c(NBA.fit$coefficients[1],NBA.fit$coefficients[2])
+
+predict(NBA.fit, data.frame(MPG=36.1))
+
+
+```
+
+### 1(l)
+
+Compute SE's for CI/PI
+
+IMPORTANT: Do not forget to delete the "\#" so you can actually run the code.
+
+```{r}
+X=matrix(c(rep(1,82),NBAFull$MPG),nrow=82)
+X
+x0=c(1,36.1)
+x0
+s=summary(NBA.fit)$sigma
+se_p=s*sqrt(1+ t(x0)%*%solve(t(X)%*%X)%*%x0)
+se_c=s*sqrt(t(x0)%*%solve(t(X)%*%X)%*%x0)
+se_p
+se_c
+```
+
+### 1(m)
+
+CI and PI for efficiency for MPG=36.1 (Westbrook's MPG)
+
+```{r}
+#(tstar=qt(p=???, df=???))
+#????
+ts=qt(p=0.975, df=80)
+ts
+
+```
+
+### 1(n)
+
+CI and PI for efficiency for MPG=36.1 (Westbrook's MPG) using predict()
+
+```{r}
+new_MPG=data.frame(MPG=36.1)
+predict(NBA.fit, new_MPG, interval='confidence', level = .95)
+predict(NBA.fit, new_MPG, interval='prediction', level = .95)
+
+```
+
+### 1(o2)
+
+"Pointwise" Confidence/Prediction bands
+
+```{r}
+#Harden's stats
+NBAFull[NBAFull$Player=="harden,james",]
+```
+
+```{r}
+par(mfrow=c(1,1))
+plot(eff48m~MPG, data=NBAFull,pch=19)
+abline(NBA.fit,col='blue')
+text(NBAFull$MPG[id],NBAFull$eff48m[id],label=NBAFull$Player[id],pos=c(4,2,2,2,2),cex=0.6)
+
+library(RColorBrewer); cols <- brewer.pal(2, "Dark2")
+
+#Plot "pointwise" Confidence/Prediction bands 
+new_MPG=data.frame(MPG=seq(10,40,by=1))
+CI.Limits=as.data.frame(predict(NBA.fit,new_MPG,interval='confidence',level=0.95))
+PI.Limits=as.data.frame(predict(NBA.fit,new_MPG,interval='prediction',level=0.95))
+
+lines(new_MPG$MPG, CI.Limits$lwr,col=cols[1])
+lines(new_MPG$MPG, CI.Limits$upr,col=cols[1])
+
+lines(new_MPG$MPG, PI.Limits$lwr,col=cols[2])
+lines(new_MPG$MPG, PI.Limits$upr,col=cols[2])
+
+legend('topleft',legend=c('CI','PI'),lty=1,col=cols)
+```
+
+# Example 2: houses.txt
+
+Import data
+
+```{r}
+houses = read.table('houses.txt', header=TRUE, sep="")
+str(houses)
+plot(Price~Size, data=houses)
+```
+
+Scatter plot log(y)\~x
+
+```{r}
+plot(log(Price,10)~Size, data=houses)
+
+```
+
+Residual plots for log-linear model
+
+```{r}
+par(mfrow=c(1,2))
+plot(lm(log(Price,10)~Size, data=houses),c(1,2))
+par(mfrow=c(1,1))
+```
+
+Fit log-linear model
+
+```{r}
+fit.houses=lm(log(Price,10)~Size,data=houses)
+summary(fit.houses)
+
+```
+
+### 2(a)
+
+PI 2000 ft\^2 house
+
+```{r}
+new_houses=data.frame(Size=2000)
+predict(fit.houses, new_houses, interval='prediction', level = .95)
+
+```
+
+Back-tranformed PI 2000 ft\^2 house 
+
+```{r}
+exp(predict(fit.houses, new_houses, interval='prediction', level = .95))
+
+
+
+```
+
+# Example 3: Cars75
+
+Import Data
+
+```{r}
+Cars75Data=read.table("cars75.txt",header=T, sep='\t')
+str(Cars75Data)
+
+```
+
+### 3(a)
+
+Fit 1-variable model with horsepower
+
+```{r}
+cars.fit=lm(mpg~horsepower,data=Cars75Data)
+summary(cars.fit)
+
+
+```
+
+CI/PI horsepower=130
+
+```{r}
+new_cars=data.frame(horsepower=130)
+predict(cars.fit, new_cars, interval='confidence', level = .95)
+predict(cars.fit, new_cars, interval='prediction', level = .95)
+```
+
+### 3(b)
+
+Fit 2-variable model with horsepower & width
+
+```{r}
+cars.fit2=lm(mpg~horsepower+width,data=Cars75Data)
+summary(cars.fit2)
+
+```
+
+CI/PI horsepower=130, width=70
+
+```{r}
+new_cars2=data.frame(horsepower=130, width=70)
+predict(cars.fit2, new_cars2, interval='confidence', level = .95)
+predict(cars.fit2, new_cars2, interval='prediction', level = .95)
+
+```
+
+### 3(c)
+
+CI/PI horsepower=130, width=65
+
+```{r}
+
+new_cars3=data.frame(horsepower=130, width=65)
+predict(cars.fit2, new_cars3, interval='confidence', level = .95)
+predict(cars.fit2, new_cars3, interval='prediction', level = .95)
+
+```
