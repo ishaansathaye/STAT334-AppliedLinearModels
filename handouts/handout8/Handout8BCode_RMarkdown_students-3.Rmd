@@ -24,6 +24,14 @@ Models
 summary(lm(overall.rating~no.special,data=SuperPerf))
 ```
 
+```{r}
+summary(lm(overall.rating~no.special+handles.complaints,data=SuperPerf))
+```
+
+```{r}
+summary(lm(overall.rating~handles.complaints,data=SuperPerf))
+```
+
 ### 2(g)
 
 Summary Note: \~. fit the model with ALL variables
@@ -62,7 +70,6 @@ Partial F test "by hand"
 ```{r}
 (F=(105.65/4)/49.96)
 pf(0.529,4,23,lower.tail=F)
-
 ```
 
 ### 2(p)
