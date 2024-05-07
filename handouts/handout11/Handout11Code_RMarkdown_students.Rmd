@@ -1,0 +1,161 @@
+---
+title: "Handout11Code_RMarkdown_students_ANSWERS"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 1: achieve.xls
+
+Import Data
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(readxl)  
+AchieveData=read_excel("achieve.xls")
+str(AchieveData)
+```
+
+### 1(a)
+
+Scatterplots
+
+```{r}
+par(mfrow=c(1,3))
+plot(ACHV~FAM,data=AchieveData,pch=19)
+plot(ACHV~PEER,data=AchieveData,pch=19)
+plot(ACHV~SCHOOL,data=AchieveData,pch=19)
+par(mfrow=c(1,1))
+
+```
+
+### 1(b)
+
+Overall F
+
+```{r}
+#achv.fit = lm(????)
+#summary(achv.fit)
+
+
+```
+
+### 1(d1)
+
+Residual Plots
+
+```{r}
+#residual plots (e v. fit, qqplot, hist)
+par(mfrow=c(2,3))
+plot(resid(achv.fit)~fitted(achv.fit), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(achv.fit),ylab='Residuals'); qqline(resid(achv.fit),lty=2)
+hist(resid(achv.fit),main="", xlab="Residuals",col='lightblue')
+
+#residual plots (e v. predictor)
+plot(resid(achv.fit)~FAM,data=AchieveData,ylab='Residuals');abline(h=0,lty=2)
+plot(resid(achv.fit)~PEER,data=AchieveData,ylab='Residuals');abline(h=0,lty=2)
+plot(resid(achv.fit)~SCHOOL,data=AchieveData,ylab='Residuals');abline(h=0,lty=2)
+par(mfrow=c(1,1))
+
+```
+
+### 1(d2)
+
+Scatterplots
+
+```{r}
+
+
+
+
+
+
+```
+
+### 1(e)
+
+VIF by-hand
+
+```{r}
+summary(lm(SCHOOL~FAM+PEER,data=AchieveData))
+
+R.squared3=summary(lm(SCHOOL~FAM+PEER,data=AchieveData))$r.squared
+R.squared3
+
+#VIF3 = ??????
+
+
+```
+
+### 1(f)
+
+VIF from car
+
+```{r}
+#install.packages('car') if haven't already
+library(car)
+vif(lm(ACHV~FAM+PEER+SCHOOL,data=AchieveData))
+
+```
+
+### 1(g)
+
+Added Variable plot for School in 2-var model
+
+```{r}
+summary(lm(ACHV~FAM,data=AchieveData))
+resid(summary(lm(ACHV~FAM,data=AchieveData)))
+hist(resid(summary(lm(ACHV~FAM,data=AchieveData))), main = "???", xlab = "???")
+
+
+
+
+
+```
+
+### 1(h)
+
+```{r}
+
+
+
+
+
+
+
+```
+
+### 1(i)
+
+Added Variable plot for School in 2-var model
+
+```{r}
+summary(lm(ACHV~FAM+SCHOOL,data=AchieveData))
+par(mfrow=c(1,1))
+plot(resid(lm(ACHV~FAM,data=AchieveData))~
+     resid(lm(SCHOOL~FAM,data=AchieveData)),
+     pch=19,
+     ylab='ACHV | FAM', 
+     xlab ='SCHOOL | FAM' )
+abline(lm(resid(lm(ACHV~FAM,data=AchieveData))~
+          resid(lm(SCHOOL~FAM,data=AchieveData))),
+       col='blue')
+
+
+
+
+
+
+
+```
+
+### 1(l)
+
+AV plots full model w/ car package
+
+```{r}
+#library(car)
+avPlots(lm(ACHV~FAM+PEER+SCHOOL,data=AchieveData),layout=c(1,3))
+summary(lm(ACHV~FAM+PEER+SCHOOL,data=AchieveData))
+
+```
