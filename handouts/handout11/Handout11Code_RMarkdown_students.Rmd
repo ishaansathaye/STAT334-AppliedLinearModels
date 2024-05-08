@@ -34,8 +34,8 @@ par(mfrow=c(1,1))
 Overall F
 
 ```{r}
-#achv.fit = lm(????)
-#summary(achv.fit)
+achv.fit = lm(ACHV ~ FAM+PEER+SCHOOL, data = AchieveData)
+summary(achv.fit)
 
 
 ```
@@ -64,11 +64,8 @@ par(mfrow=c(1,1))
 Scatterplots
 
 ```{r}
-
-
-
-
-
+pairs(AchieveData)
+cor(AchieveData)
 
 ```
 
@@ -82,7 +79,8 @@ summary(lm(SCHOOL~FAM+PEER,data=AchieveData))
 R.squared3=summary(lm(SCHOOL~FAM+PEER,data=AchieveData))$r.squared
 R.squared3
 
-#VIF3 = ??????
+VIF3 <- 1/(1 - R.squared3)
+VIF3
 
 
 ```
@@ -105,7 +103,7 @@ Added Variable plot for School in 2-var model
 ```{r}
 summary(lm(ACHV~FAM,data=AchieveData))
 resid(summary(lm(ACHV~FAM,data=AchieveData)))
-hist(resid(summary(lm(ACHV~FAM,data=AchieveData))), main = "???", xlab = "???")
+hist(resid(summary(lm(ACHV~FAM,data=AchieveData))), main = "Variability of ACHV not explained by FAM", xlab = "ACHV residual")
 
 
 
@@ -116,9 +114,9 @@ hist(resid(summary(lm(ACHV~FAM,data=AchieveData))), main = "???", xlab = "???")
 ### 1(h)
 
 ```{r}
-
-
-
+summary(lm(SCHOOL~FAM,data=AchieveData))
+resid(summary(lm(SCHOOL~FAM,data=AchieveData)))
+hist(resid(summary(lm(SCHOOL~FAM,data=AchieveData))), main = "Variability of SCHOOL not explained by FAM", xlab = "SCHOOL residual")
 
 
 
