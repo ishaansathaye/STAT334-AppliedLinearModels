@@ -1,0 +1,184 @@
+---
+title: "Handout12Code_RMarkdown_studentsANSWERS"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 1:                           #
+
+### 1(a-e)
+Construct Artificial Data
+```{r}
+set.seed(453)
+x=c(seq(0,10,length=18),13,13.5,14.5)+rnorm(21,0,0.2)
+y=0.5*x+c(rnorm(9,0,0.3),3,rnorm(8,0,0.3),-0.5,-4,-5)
+plot(y~x, pch=19,cex=1.2)
+set.seed(NULL)
+
+#Initial Graph
+
+#Fit w/ all cases
+text(x[c(10,19,20,21)],y[c(10,19,20,21)],labels=c('1','2','3','4'),pos=2)
+fit=lm(y~x);abline(fit,col='black'); summary(fit)$r.squared
+anova(fit)
+
+# Fit w/ case 1 removed
+fit1=lm(y[-10]~x[-10]);abline(fit1,col='red',lwd=2,lty=2)
+points(x[c(10)],y[c(10)],col='red',pch=19,cex=1.2)
+text(x[c(10)],y[c(10)],label='1',col='red',pos=2,cex=1.2)
+anova(fit1)
+
+# Fit w/ case 2 removed
+fit2=lm(y[-19]~x[-19]);abline(fit2,col='blue',lwd=2,lty=2)
+points(x[c(19)],y[c(19)],col='blue',pch=19,cex=1.2)
+text(x[c(19)],y[c(19)],label='2',col='blue',pos=2,cex=1.2)
+anova(fit2)
+
+# Fit w/ cases 3 & 4 removed
+fit3=lm(y[-c(20,21)]~x[-c(20,21)]);abline(fit3,col='purple',lwd=2,lty=2)
+points(x[c(20,21)],y[c(20,21)],col='purple',pch=19,cex=1.2)
+text(x[c(20,21)],y[c(20,21)],label=c('3','4'),col='purple',pos=2,cex=1.2)
+anova(fit3)
+
+#plot legend
+legend('topleft',lty=c(1,2,2,2),
+       col=c('black','red','blue','purple'),
+       legend=c(paste('full data set; R^2=', round(summary(fit)$r.squared,2)),
+                paste('1 removed; R^2=', round(summary(fit1)$r.squared,2)),
+                paste('2 removed; R^2=', round(summary(fit2)$r.squared,2)),
+                paste('3 & 4 removed; R^2=', round(summary(fit3)$r.squared,2))))
+```
+
+
+s for each model
+```{r}
+c(summary(fit)$sigma, summary(fit1)$sigma, summary(fit2)$sigma, summary(fit3)$sigma)
+
+```
+
+R^2 for each model
+```{r}
+c(summary(fit)$r.squared, summary(fit1)$r.squared, summary(fit2)$r.squared, summary(fit3)$r.squared)
+```
+
+# Example 2: stateSAT.xls              #
+
+Import Data
+```{r}
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(readxl)  #install.packages('readxl) if you haven't already
+SATData=read_excel("stateSAT.xls")
+str(SATData)
+```
+
+
+### 2(a)
+Scatterplot
+```{r}
+par(mfrow=c(1,1))
+plot(SAT~INCOME,data=SATData,pch=19)
+fit=lm(SAT~INCOME,data=SATData)
+abline(fit,col='blue')
+text(SATData$INCOME[c(1,2,22,29,37,50)],
+     SATData$SAT[c(1,2,22,29,37,50)],
+     label=SATData$STATE[c(1,2,22,29,37,50)],
+     pos=c(2,2,2,2,4,4))
+
+```
+
+### 2(b)
+Extract values of interest
+
+```{r}
+t_i=rstudent(fit) #studentized residuals
+t_i
+h_i=hatvalues(fit); #leverage
+h_i
+D_i=cooks.distance(fit) #cooks distance
+D_i
+DFFITS_i=dffits(fit) #DFFITS
+DFFITS_i
+k=ncol(model.matrix(fit))-1 #number of predictors in model
+k
+n=nrow(model.matrix(fit)) #sample size
+n
+```
+
+Three Plots (Leverage DFFITS, and Cook's distance)
+
+```{r}
+par(mfrow=c(1,3))
+#Leverage plot
+plot(h_i,ylab='Leverage',type='h')
+abline(h=2*(k+1)/n,lty=2)
+
+#After identifying, label cases of interest
+#identify(h_i,label=SATData$STATE)
+text(1:n,abs(h_i))
+text(c(22,29,37,50),
+     h_i[c(22,29,37,50)],
+     label=SATData$STATE[c(22,29,37,50)],
+     pos=c(1,1,1,2))
+
+#|DDFITS| plot
+plot(abs(DFFITS_i),ylab='|DFFITS|',type='h')
+abline(h=c(1,2*sqrt((k+1)/n)),lty=2)
+
+#After identifying, label cases of interest
+#identify(abs(DFFITS_i),label=SATData$STATE)
+#text(1:n,abs(DFFITS_i))
+text(c(2,22,29,50),
+     abs(DFFITS_i[c(2,22,29,50)]),
+     label=SATData$STATE[c(2,22,29,50)],
+     pos=c(4,2,1,2))
+
+#Cooks Distance Plot
+#plot(D_i, ylab='Cooks Distance')
+plot(D_i, ylab='Cooks Distance', ylim=c(0,0.5),type='h')
+abline(h=c(0.5,1),lty=2)
+
+#After identifying, label cases of interest
+#identify(D_i,label=SATData$STATE)
+#text(1:n,abs(D_i))
+text(c(2,22,29,50),
+     D_i[c(2,22,29,50)],
+     label=SATData$STATE[c(2,22,29,50)],
+     pos=c(4,3,1,2))
+
+SATData$STATE[c(2,22,29,37,50)]
+```
+
+### 2(d)
+
+Absolute studentized residuals 
+ABonferonni adj. t* 
+```{r}
+(t.star=qt(0.1/(2*n),df=n-k-2,lower.tail = F)) 
+
+```
+
+```{r}
+par(mfrow=c(1,1))
+plot(abs(t_i),ylab="|t_i|",ylim=c(0,t.star))
+abline(h=t.star,lty=2) #Bonferonni Adj. t*
+text(c(2,6,29),
+     abs(t_i[c(2,6,29)]),
+     label=SATData$STATE[c(2,6,29)],
+     pos=c(4,4,4))
+
+```
+
+### 2(e)
+
+```{r}
+#car package has own plots
+par(mfrow=c(1,1))
+library(car)
+#SATData=data.frame(SATData, row.names = SATData$STATE)
+infIndexPlot(fit, vars=c("Cook", "Studentized", "Bonf", "hat"))
+influencePlot(fit)
+SATData$STATE[c(2,22,29)]
+#?influencePlot
+```
+
