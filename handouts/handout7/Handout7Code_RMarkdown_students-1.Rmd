@@ -356,6 +356,6 @@ Shapiro-Wilk & Breusch-Pagant tests
 shapiro.test(resid(fit))
 
 #install.packages('lmtest') if haven't already
-#library('lmtest')
+library('lmtest')
 bptest(fit)
 ```

@@ -5,10 +5,12 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Example 1:                           #
+# Example 1:
 
 ### 1(a-e)
+
 Construct Artificial Data
+
 ```{r}
 set.seed(453)
 x=c(seq(0,10,length=18),13,13.5,14.5)+rnorm(21,0,0.2)
@@ -50,21 +52,23 @@ legend('topleft',lty=c(1,2,2,2),
                 paste('3 & 4 removed; R^2=', round(summary(fit3)$r.squared,2))))
 ```
 
-
 s for each model
+
 ```{r}
 c(summary(fit)$sigma, summary(fit1)$sigma, summary(fit2)$sigma, summary(fit3)$sigma)
 
 ```
 
-R^2 for each model
+R\^2 for each model
+
 ```{r}
 c(summary(fit)$r.squared, summary(fit1)$r.squared, summary(fit2)$r.squared, summary(fit3)$r.squared)
 ```
 
-# Example 2: stateSAT.xls              #
+# Example 2: stateSAT.xls
 
 Import Data
+
 ```{r}
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(readxl)  #install.packages('readxl) if you haven't already
@@ -72,9 +76,10 @@ SATData=read_excel("stateSAT.xls")
 str(SATData)
 ```
 
-
 ### 2(a)
+
 Scatterplot
+
 ```{r}
 par(mfrow=c(1,1))
 plot(SAT~INCOME,data=SATData,pch=19)
@@ -88,6 +93,7 @@ text(SATData$INCOME[c(1,2,22,29,37,50)],
 ```
 
 ### 2(b)
+
 Extract values of interest
 
 ```{r}
@@ -151,8 +157,8 @@ SATData$STATE[c(2,22,29,37,50)]
 
 ### 2(d)
 
-Absolute studentized residuals 
-ABonferonni adj. t* 
+Absolute studentized residuals ABonferonni adj. t\*
+
 ```{r}
 (t.star=qt(0.1/(2*n),df=n-k-2,lower.tail = F)) 
 
@@ -181,4 +187,3 @@ influencePlot(fit)
 SATData$STATE[c(2,22,29)]
 #?influencePlot
 ```
-
