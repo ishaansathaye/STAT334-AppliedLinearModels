@@ -1,5 +1,5 @@
 ---
-title: "Homework 3"
+title: "Homework 4"
 subtitle: STAT 334
 author: "Krishnanshu Gupta, Ishaan Sathaye, Sreshta Talluri"
 date: "`r Sys.Date()`"
@@ -9,9 +9,7 @@ output:
     highlight: haddock
     toc: true
     toc_float: true
-    code_folding: show
-editor_options: 
-  chunk_output_type: console
+    code_folding: hide  
 ---
 
 ```{r chunk setup, include=FALSE}
@@ -26,16 +24,87 @@ library(readxl)
 setwd( dirname( rstudioapi::getActiveDocumentContext( )$path ) )
 ```
 
+# Question 2
+
+```{r cars}
+love <- read_xls("./love.xls")
+summary(love)
+```
+
+## Part (a)
+
+```{r}
+model <- lm(NGF ~ PLS + AGE, data = love)
+summary(model)
+```
+
+For every one point increase in PLS score, the predicted NGF levels will increase by 2.77, after adjusting for AGE.
+
+## Part (b)
+
+**Null Hypothesis (H0):** $\beta_1$, $\beta_2$ = 0
+
+**Alternate Hypothesis (H1):** At least one of $\beta_1$ or $\beta_2$ $\neq$ 0
+
+$\beta_1$ is the coefficient for PLS score and $\beta_2$ is the coefficient for AGE
+
+**Test Statistic:** F-statistic = 3.774, DF = 58 - 3 = 55
+
+p-value = 0.02911
+
+**Conclusion:** Based on the small p-value of 0.02911, we have sufficient evidence to reject the Null Hypothesis. We have fairly strong evidence to suggest that at least one of the predictors, PLS score or AGE, is a significant predictor of NGF levels. This suggests that including these predictors in the model provides a better fit for explaining the variability in NGF levels compared to a model without these predictors.
+
+## Part (c)
+
+**Null Hypothesis (H0):** $\beta_1$ = 0
+
+**Alternate Hypothesis (H1):** $\beta_1$ \> 0
+
+$\beta_1$ is the coefficient for PLS score
+
+**Test Statistic:** t = 2.739, DF = 58 - 3 = 55
+
+p-value = 0.00828 / 2 = 0.00414 (we divide by 2 since it is a one-sided test)
+
+**Conclusion:** Based on the small p-value of 0.00414, we have sufficient evidence to reject the Null Hypothesis. We have very strong evidence of a positive association between PLS score and NGF level, where an increase in PLS score is associated with an increase in NGF level, after adjusting for AGE.
+
+## Part (d)
+
+**Null Hypothesis (H0):** The inclusion of BDI, STAI, and YBOCS does not significantly improve the model's explanatory power beyond what is provided by PLS and AGE. This implies that coefficients for BDI, STAI, and YBOCS in the extended model are all 0. ($\beta_3$, $\beta_4$, $\beta_5$ = 0)
+
+**Alternate Hypothesis (H1):** The inclusion of BDI, STAI, and YBOCS provides a significant improvement in the model's explanatory power. (At least one of $\beta_3$, $\beta_4$, $\beta_5$ $\neq$ 0)
+
+```{r}
+extended_model <- lm(NGF ~ PLS + AGE + BDI + STAI + YBOCS, data = love)
+
+# Perform an ANOVA to compare the two models
+anova(model, extended_model)
+```
+
+**Test Statistic:** F-statistic = 1.3426
+
+**DF:** Model DF = 55; Extended Model DF = 52; Difference in DF = 3
+
+p-value = 0.2707
+
+**Conclusion:** Given the F-statistic of 1.3426 and a p-value of 0.2707, we fail to reject the null hypothesis at a typical alpha level of 0.05. The p-value of 0.2707 indicates that we have insufficient statistical evidence to conclude that the psychiatric rating scales (BDI, STAI, and YBOCS) contribute additional explanatory power to the relationship between NGF levels and the initial predictors (PLS and AGE).
+
+## Part (e)
+
+```{r}
+# Adjusted R-squared for the initial model
+summary(model)$adj.r.squared
+
+# Adjusted R-squared for the extended model with STAI (only adding STAI for comparison)
+model_with_stai <- lm(NGF ~ PLS + AGE + STAI, data = love)
+summary(model_with_stai)$adj.r.squared
+```
+
+The original model (not including STAI) has a higher adjusted R-squared (0.0887) compared to the new model which includes STAI (0.0729). This indicates that the original model actually explains a slightly larger proportion of the variance in NGF level compared to the new model which includes STAI.
+
+This could be due to the fact that the variance related to NGF levels that STAI could explain is already captured by the other variables, or STAI might not be a relevant predictor for NGF levels in this specific context. Another possible explanation could be that adding STAI could actually decrease the effectiveness of the other variables in the model by introducing noise.
+
 # Problem 3
-
-Suppose we are interested in predicting the selling price of the homes sold in Northampton, Massachusetts in 2014 (adjusted price from 2007).   The main response variable is price of the house in 2014 in thousands of dollars (would need to multiply by 1000 to get the actual price). The variables we will consider for this model: 
-
-Y= price2014 \
-X1= distance (distance to the bike trail (miles))\
-X2= square+feet (square feet of the house)\
-X3= no_rooms (number of ALL rooms in the house)\
-X4= no_full_baths (number of Full baths)\
-X5=  walkscore (Walk Score measures the walkability of any address using a patented system. Points are awarded based on the distance to amenities in each category. Amenities within a 5 minute walk provide a higher walkscore.) 
 
 ```{r}
 rails = read_excel("./Rails.xlsx")
@@ -111,9 +180,11 @@ From the residual analysis, the assumption for linearity has not been violated s
 
 **Model-Utility Test**
 
-$H_0$: $\beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0$, where $\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, and $\beta_5$ are the population parameters for distance, square feet, number of rooms, number of full baths, and walk score of the house respectively.
+$H_0$: $\beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0$.
 
-$H_a$: At least one of $\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, and $\beta_5$, where $\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, and $\beta_5$ are the population parameters for distance, square feet, number of rooms, number of full baths, and walk score of the house respectively, is not equal to 0.
+$H_a$: At least one of $\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, or $\beta_5$ $\neq$ 0.
+
+$\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, and $\beta_5$ are the coefficients for distance, square feet, number of rooms, number of full baths, and walk score of the house respectively.
 
 ```{r}
 summarym1
@@ -121,65 +192,65 @@ summarym1
 
 Test Statistic: F-statistic is 45.23
 
-Degrees of Freedom: k = 5 and n - k - 1 = 98
+Degrees of Freedom: 104 - 6 = 98
 
 p-value: 2.2e-16
 
-Decision: Reject Null Hypothesis
-
-Conclusion: We have strong evidence to conclude at least one of the $\beta_i$'s (i = 1,...,5), where $\beta_1$, $\beta_2$, $\beta_3$, $\beta_4$, and $\beta_5$ are the population parameters for distance, square feet, number of rooms, number of full baths, and walk score of the house respectively, is not equal to 0. We can conclude that at least one of the variables (distance, square feet, number of rooms, number of full baths, and walk score) is a significantly useful in predicting the price of the house in 2014.
+Conclusion: Based on the small p-value of 2.2e-16, we have sufficient evidence to reject the Null Hypothesis. We have extremely strong evidence to conclude that one of the $\beta_i$'s (i = 1,...,5) is not equal to 0, and thus, can conclude that at least one of the variables (distance, square feet, number of rooms, number of full baths, and walk score) is a significant predictor of the price of the house in 2014.
 
 ## Part (f)
 
 **Single-Coefficient Test on X1 (distance)**
 
-$H_0$: $\beta_1 = 0$, where $\beta_1$ is the population parameter for distance.
+$H_0$: $\beta_1 = 0$
 
-$H_a$: $\beta_1 \neq 0$, where $\beta_1$ is the population parameter for distance.
+$H_a$: $\beta_1 \neq 0$
+
+$\beta_1$ is the coefficient for distance.
 
 ```{r}
 summarym1 # or Anova(model1, type='II')
 ```
 
-Test Statistic: F-statistic is $t^2$ = 0.080089
+Test Statistic: t = 0.283
 
-Degrees of Freedom: k = 1 and n - k - 1 = 98
+Degrees of Freedom: 104 - 6 = 98
 
 p-value: 0.7781
 
-Decision: Fail to Reject Null Hypothesis
-
-Conclusion: Large p-value implies we do not have enough evidence to believe that $\beta_1$, which is distance, is any different from zero after adjusting for the other variables (square feet, number of rooms, number of full baths, and walk score of the house). Distance does not significantly improve the model containing the other variables.
+Conclusion: Based on the large p-value of 0.7781, we do not have sufficient evidence to reject the null hypothesis. The large p-value implies that we do not have enough evidence to believe that $\beta_1$, which is distance, is any different from zero after adjusting for the other variables (square feet, number of rooms, number of full baths, and walk score of the house). Thus, Distance is not a significant predictor for the model.
 
 ## Part (g)
 
 **Single-Coefficient Test on X2 (squarefeet)**
 
-$H_0$: $\beta_2 = 0$, where $\beta_2$ is the population parameter for square feet.
+$H_0$: $\beta_2 = 0$
 
-$H_a$: $\beta_2 \neq 0$, where $\beta_2$ is the population parameter for square feet.
+$H_a$: $\beta_2 \neq 0$
+
+$\beta_2$ is the coefficient for square feet.
 
 ```{r}
 summarym1 # or Anova(model1, type='II')
 ```
 
-Test Statistic: F-statistic is $t^2$ = 24.97001
+Test Statistic: t = 4.997
 
-Degrees of Freedom: k = 1 and n - k - 1 = 98
+Degrees of Freedom: 104 - 6 = 98
 
 p-value: 2.54e-06
 
-Decision: Reject Null Hypothesis
-
-Conclusion: Small p-value implies we have strong evidence to believe that $\beta_2$, which is square feet, is different from zero after adjusting for the other variables (distance, number of rooms, number of full baths, and walk score of the house). Square feet is a significant predictor of the model containing the other variables.
+Conclusion: Based on the small p-value of 2.54e-06, we have sufficient evidence to reject the null hypothesis. The small p-value implies we have strong evidence to believe that $\beta_2$, which is square feet, is different from zero after adjusting for the other variables (distance, number of rooms, number of full baths, and walk score of the house). Thus, Square feet is a significant predictor of the model.
 
 ## Part (h)
 
 **Partial F-Test on X1 and X3, (distance and no_rooms)**
 
-$H_0$: $\beta_1 = \beta_3 = 0$, where $\beta_1$ and $\beta_3$ are the population parameters for distance and no_rooms.
+$H_0$: $\beta_1 = \beta_3 = 0$
 
-$H_a$: At least one of $\beta_1$ and $\beta_3 \neq 0$, where $\beta_1$ and $\beta_3$ are the population parameters for distance and no_rooms.
+$H_a$: At least one of $\beta_1$ and $\beta_3 \neq 0$
+
+$\beta_1$ and $\beta_3$ are the coefficients for distance and no_rooms.
 
 ```{r}
 library(car)
@@ -190,21 +261,21 @@ anova(model2, model1)
 
 Test Statistic: F-statistic is 0.1208
 
-Degrees of Freedom: r = 2 and n - k - 1 = 98
+Degrees of Freedom: 98
 
 p-value: 0.8863
 
-Decision: Fail to Reject Null Hypothesis
-
-Conclusion: We fail to reject the null hypothesis (large p value). Therefore adding these 2 variables, distance and no_rooms, to a model already containing the other 3 variables (square feet, number of full baths, and walk score) does not significantly improve the model. We do not have enough evidence that the full model containing all variables is significantly better than the model with just 3 variables. So we can keep with model 2 because of parsimony.
+Conclusion: Based on the large p-value, we don't have enough evidence to reject the null hypothesis. Therefore adding these 2 variables, distance and no_rooms, to a model already containing the other 3 variables (square feet, number of full baths, and walk score) does not significantly improve the model. We do not have enough evidence that the full model containing all variables is significantly better than the model with just 3 variables. Thus, we can make the decision to use model2 which drops X1 and X3.
 
 ## Part (i)
 
 **Partial F-Test on X3 and X4, (no_rooms and no_full_baths)**
 
-$H_0$: $\beta_3 = \beta_4 = 0$, where $\beta_3$ and $\beta_4$ are the population parameters for no_rooms and no_full_baths.
+$H_0$: $\beta_3 = \beta_4 = 0$
 
-$H_a$: At least one of $\beta_3$ and $\beta_4 \neq 0$, where $\beta_3$ and $\beta_4$ are the population parameters for no_rooms and no_full_baths.
+$H_a$: At least one of $\beta_3$ and $\beta_4 \neq 0$
+
+$\beta_3$ and $\beta_4$ are the coefficients for no_rooms and no_full_baths.
 
 ```{r}
 library(car)
@@ -215,27 +286,93 @@ anova(model3, model1)
 
 Test Statistic: F-statistic is 3.0247
 
-Degrees of Freedom: r = 2 and n - k - 1 = 98
+Degrees of Freedom: 98
 
 p-value: 0.05313
 
-Decision: Fail to Reject Null Hypothesis
+Decision: Reject Null Hypothesis
 
 Conclusion: Based on the p-value of 0.05313, which is greater than our alpha of 0.01, we don't have sufficient evidence to reject the null hypothesis. Therefore adding these 2 variables, no_rooms and no_full_baths, to a model already containing the other 3 variables (distance, square feet, and walk score) does not significantly improve the model. We do not have enough evidence that the full model containing all variables is significantly better than the model with just 3 variables. Thus, we can make the decision to use model3 which drops X3 and X4.
 
 ## Part (j)
 
-Model 2 is better than model 1 due to parsimony, which means that the model with fewer parameters is favored over a complex model. I decided this from the p-value from the partial f test, where I failed to reject the null hypothesis that adding variables to the smaller model to form the larger model does not significantly improve the prediction of Y.
+Model 2 is better than model 1 due to parsimony, which means that the model with fewer parameters is favored over a complex model. We decided this from the p-value from the partial f test, where we failed to reject the null hypothesis that adding variables to the smaller model to form the larger model does not significantly improve the prediction of house price.
 
 ## Part (k)
 
-Model 3 is better than model 2. I decided this from the p-value and f statistic comparison between model 1 and 2 and model 1 and 3. The F statistic for the partial F test for model 3 is 3.0247 while 
-the F statistic for the partial F test for model 2 is 0.1208. This means that the variability explained by model 3 is much larger than the unexplained variability, therefore suggesting that the variables in model 3 have more of an impact on the price of the house in 2014 than the variables in model 2.
+Model 3 is better than model 2. Since both models were rejected due to having p-values greater than our alpha threshold of 0.01, we decided to do a comparison of the p-value and F-statistic between model 1 and 2, and model 1 and 3. The F-statistic for the partial F test for model 3 is 3.0247 and the p-value is 0.05313, while the F-statistic for the partial F test for model 2 is 0.1208 with a p-value of 0.8863. The larger F-statistic and smaller p-value in Model 3 indicates that it explains a larger proportion of the variability in the response variable, house prices in 2014, compared to Model 2.
 
 ## Part (l)
 
 ```{r}
-confint(model1, level = (1 - 0.05/5))
+confint(model1, level = 1 - (1 - 0.95)/5)
 ```
 
-We are at least 95% confident that all intervals correctly capture the true population parameters.
+We are at least 95% confident that the five intervals simultaneously capture their corresponding population coefficients.
+
+# Problem 4
+
+## Part (a)
+
+```{r}
+#Import the Data
+SweetData=read.table('sweetness.txt',header=TRUE)
+
+# By-hand
+model <- lm(SweetIndex ~ Pectin, data = SweetData)
+x0 = c(1, 300)
+predicted_matrix = model$coefficients %*% x0
+print(paste("By-hand:", round(predicted_matrix[1], 5)))
+
+# predict()
+predicted_func = predict(model, data.frame(Pectin = 300))
+print(paste("Predict():", round(predicted_func[1], 5)))
+```
+
+## Part (b)
+
+```{r}
+s = summary(model)$sigma
+rows = length(SweetData$SweetIndex)
+df = rows - 2
+tstar = qt(0.975, df = df)
+
+# By-hand calculation
+X = matrix(c(rep(1, rows), SweetData$Pectin), nrow = rows)
+SE = s * sqrt((t(x0) %*% solve(t(X) %*% X) %*% x0))
+
+ci_lower <- predicted_matrix[1] - tstar * SE
+ci_upper <- predicted_matrix[1] + tstar * SE
+
+print(paste("By-hand Confidence Interval:", round(ci_lower, 4), "to", round(ci_upper, 4)))
+
+# predict()
+CI <- predict(model, newdata = data.frame(Pectin = 300), interval = "confidence", level = 0.95)
+print(paste("Predict() Confidence Interval:", round(CI[2], 4), "to", round(CI[3], 4)))
+```
+
+We're 95% confident that the mean sweetness index for all orange juices with 300 ppm of pectin is between 5.4372 and 5.6806.
+
+## Part (c)
+
+```{r}
+# By-hand calculation
+SE = s * sqrt(1 + (t(x0) %*% solve(t(X) %*% X) %*% x0))
+
+pi_lower <- predicted_matrix[1] - tstar * SE
+pi_upper <- predicted_matrix[1] + tstar * SE
+
+print(paste("By-hand Prediction Interval:", round(pi_lower, 4), "to", round(pi_upper, 4)))
+
+# predict()
+PI <- predict(model, newdata = data.frame(Pectin = 300), interval = "prediction", level = 0.95)
+print(paste("Predict() Prediction Interval:", round(PI[2], 4), "to", round(PI[3], 4)))
+```
+
+We're 95% confident that an orange juices with 300 ppm of pectin will have a sweetness index between 5.0967 and 6.0211.
+
+## Part (d)
+
+In Part B, we're calculating the confidence interval, or the average/mean of the response variable, sweetness index, for all pectin values at 300 ppm. The confidence interval only uses the variability of the sample. On the other hand, Part C, uses the prediction interval, which estimates the sweetness index for a particular singular juice at 300 ppm pectin. The prediction interval will use the variability of the sample and the variation of the individual observations at each x value, varying about their mean.
+
+Our results display that the prediction interval is wider than the confidence interval, which supports the statement regarding the additional variability in the prediction interval.
