@@ -219,9 +219,9 @@ Degrees of Freedom: r = 2 and n - k - 1 = 98
 
 p-value: 0.05313
 
-Decision: Reject Null Hypothesis
+Decision: Fail to Reject Null Hypothesis
 
-Conclusion: We reject the null hypothesis since p \< 0.1. Therefore adding these 2 variables, no_rooms and no_full_baths, to a model already containing the other 3 variables (distance, square feet, and walk score) does significantly improve the model. We have some evidence that the larger model achieves a significant reduction in SSE and improves the prediction of the price. It also means that one of the population regression coefficients of the variables in the larger model that are not in the smaller model (model 3) are nonzero.
+Conclusion: Based on the p-value of 0.05313, which is greater than our alpha of 0.01, we don't have sufficient evidence to reject the null hypothesis. Therefore adding these 2 variables, no_rooms and no_full_baths, to a model already containing the other 3 variables (distance, square feet, and walk score) does not significantly improve the model. We do not have enough evidence that the full model containing all variables is significantly better than the model with just 3 variables. Thus, we can make the decision to use model3 which drops X3 and X4.
 
 ## Part (j)
 
@@ -229,7 +229,8 @@ Model 2 is better than model 1 due to parsimony, which means that the model with
 
 ## Part (k)
 
-Model 3 is better than model 2 due to the marginal improvement in prediction by including the variable number of full baths. I decided this because in the second partial f test, I really tested whether including the variable no_full_baths significantly improves the model fit compared to model 1, which includes all the variables. Since the p-value is less than 0.1, it indicates a marginal improvement in fit by including no_full_baths. So considering this marginal significance and the principle of parsimony, model 3 is better than model 2.
+Model 3 is better than model 2. I decided this from the p-value and f statistic comparison between model 1 and 2 and model 1 and 3. The F statistic for the partial F test for model 3 is 3.0247 while 
+the F statistic for the partial F test for model 2 is 0.1208. This means that the variability explained by model 3 is much larger than the unexplained variability, therefore suggesting that the variables in model 3 have more of an impact on the price of the house in 2014 than the variables in model 2.
 
 ## Part (l)
 
