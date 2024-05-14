@@ -72,7 +72,8 @@ Import Data
 ```{r}
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(readxl)  #install.packages('readxl) if you haven't already
-SATData=read_excel("stateSAT.xls")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+SATData=read_excel("./stateSAT.xls")
 str(SATData)
 ```
 
