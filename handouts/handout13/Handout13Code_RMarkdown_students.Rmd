@@ -1,0 +1,155 @@
+---
+title: "Handout13Code_RMarkdown_STUDENTS"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Example 1: DeliveryTime.xls
+
+Import Data
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(readxl)  #install.packages('readxl) if you haven't already
+DeliveryData=read_excel("DeliveryTime.xls")
+str(DeliveryData)
+```
+
+### 1(a)
+
+Original model
+
+```{r}
+fit.dlvr=lm(Deliverytime ~ NumberCases + Distance, data = DeliveryData)
+summary(fit.dlvr)
+```
+
+### 1(b-e)
+
+Standardized Variable model.\
+Use the function scale() for every variable in the model.
+
+```{r}
+fit.dlvr.std=lm(scale(Deliverytime)~scale(NumberCases) + scale(Distance), data=DeliveryData)
+summary(fit.dlvr.std)
+```
+
+### 1(f)
+
+```{r}
+x0=data.frame(NumberCases=10,Distance=200)
+predict(fit.dlvr,x0)
+predict(fit.dlvr.std, x0)
+
+
+```
+
+# Example 2: ArticSeaIce.xls
+
+Import Data
+
+```{r}
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#library(readxl) 
+ArticData=read_excel("ArticSeaIce.xls")
+str(ArticData)
+
+```
+
+### 2(a)
+
+Linear model
+
+```{r}
+fit.artic1=lm(?????)
+summary(fit.artic1)
+
+par(mfrow=c(2,2))
+plot(???~???,data=ArticData, pch=19)
+abline(fit.artic1,col='blue')
+plot(resid(???)~fitted(???), xlab='???', ylab='???');abline(h=0,lty=2)
+qqnorm(??????,ylab='????'); qqline(resid(fit.artic1),lty=2)
+hist(???,main="", xlab="??????",col='lightblue')
+par(mfrow=c(1,1))
+
+
+
+
+```
+
+### 2(b)
+
+######################################## 
+
+# Illustration: rate of dec change
+
+######################################## 
+
+```{r}
+plot(SASIE~Year,data=ArticData, pch=19,col='red')
+
+fit.artic2002=lm(SASIE[Year<=2002]~Year[Year<=2002], data=ArticData)
+summary(fit.artic2002)
+abline(fit.artic2002,col=1)
+
+fit.artic2004=lm(SASIE[Year<=2004]~Year[Year<=2004], data=ArticData)
+summary(fit.artic2004)
+abline(fit.artic2004,col=2)
+
+fit.artic2006=lm(SASIE[Year<=2006]~Year[Year<=2006], data=ArticData)
+summary(fit.artic2006)
+abline(fit.artic2006,col=3)
+
+fit.artic2008=lm(SASIE[Year<=2008]~Year[Year<=2008], data=ArticData)
+summary(fit.artic2008)
+abline(fit.artic2008,col=4)
+
+fit.artic2010=lm(SASIE[Year<=2010]~Year[Year<=2010], data=ArticData)
+summary(fit.artic2010)
+abline(fit.artic2010,col=5)
+
+fit.artic2012=lm(SASIE[Year<=2012]~Year[Year<=2012], data=ArticData)
+summary(fit.artic2012)
+abline(fit.artic2012,col=6)
+
+legend('bottomleft',col=1:6,lty=1,
+       legend=c('2002','2004','2006','2008','2010','2012'))
+```
+
+######################################## 
+
+# End of Illustration
+
+######################################## 
+
+### 2(c)
+
+Quadratic model
+
+```{r}
+fit.quad=lm(SASIE~Year+I(Year^2),data=ArticData)
+summary(fit.quad)
+```
+
+Plots
+
+```{r}
+#Plot regression curve
+coeff=fit.quad$coeff
+par(mfrow=c(1,4))
+plot(SASIE~Year,data=ArticData,pch=19)
+curve(coeff[1]+coeff[2]*x+coeff[3]*x^2,xlim=range(ArticData$Year),add=T,col='blue')
+
+#Residual plots
+plot(resid(fit.quad)~fitted(fit.quad), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(fit.quad),ylab='Residuals'); qqline(resid(fit.quad),lty=2)
+hist(resid(fit.quad),main="", xlab="Residuals",col='lightblue')
+```
+
+VIF
+
+```{r}
+library('car')
+vif(fit.quad)
+```
