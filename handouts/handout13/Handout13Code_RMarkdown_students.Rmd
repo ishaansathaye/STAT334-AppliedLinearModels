@@ -62,20 +62,16 @@ str(ArticData)
 Linear model
 
 ```{r}
-fit.artic1=lm(?????)
+fit.artic1=lm(Year ~ SASIE, data = ArticData)
 summary(fit.artic1)
 
 par(mfrow=c(2,2))
-plot(???~???,data=ArticData, pch=19)
+plot(Year ~ SASIE,data=ArticData, pch=19)
 abline(fit.artic1,col='blue')
-plot(resid(???)~fitted(???), xlab='???', ylab='???');abline(h=0,lty=2)
-qqnorm(??????,ylab='????'); qqline(resid(fit.artic1),lty=2)
-hist(???,main="", xlab="??????",col='lightblue')
+plot(resid(fit.artic1)~fitted(fit.artic1), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(fit.artic1),ylab='Residuals'); qqline(resid(fit.artic1),lty=2)
+hist(resid(fit.artic1),main="", xlab="Residuals",col='lightblue')
 par(mfrow=c(1,1))
-
-
-
-
 ```
 
 ### 2(b)
@@ -152,4 +148,52 @@ VIF
 ```{r}
 library('car')
 vif(fit.quad)
+```
+
+### 2(d)
+
+Fit the regression model centering the year variable.
+
+```{r}
+ArticData$YearC=ArticData$Year-mean(ArticData$Year)
+fit.quadC=lm(SASIE~YearC+I(YearC^2),data=ArticData)
+summary(fit.quadC)
+
+#Plot regression curve
+coeffC=fit.quadC$coeff
+plot(SASIE~Year,data=ArticData,pch=19)
+curve(coeffC[1]+coeffC[2]*x+coeffC[3]*x^2,xlim=range(ArticData$Year),add=T,col='blue')
+
+#Residual plots
+plot(resid(fit.quadC)~fitted(fit.quadC), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(fit.quadC),ylab='Residuals'); qqline(resid(fit.quadC),lty=2)
+hist(resid(fit.quadC),main="", xlab="Residuals",col='lightblue')
+```
+
+```{r}
+vif(fit.quadC)
+```
+
+```{r}
+mean(ArticData$Year)
+```
+
+# Example 3
+
+```{r}
+cakes=read_excel("cakes.xlsx")
+str(cakes)
+```
+
+```{r}
+fit.cake=lm(Palatability ~ Time + Temperature, data = cakes)
+summary(fit.cake)
+
+```
+
+Examine the residuals vs fitted ad residuals vs each predictor
+
+```{r}
+par(mfrow=c(2,2))
+
 ```
