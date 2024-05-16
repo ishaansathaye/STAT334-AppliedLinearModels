@@ -191,9 +191,15 @@ summary(fit.cake)
 
 ```
 
-Examine the residuals vs fitted ad residuals vs each predictor
+Examine the residuals vs fitted and residuals vs each predictor
 
 ```{r}
-par(mfrow=c(2,2))
+par(mfrow=c(2,3))
+plot(resid(fit.cake)~fitted(fit.cake), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+plot(resid(fit.cake)~cakes$Time, xlab='Time', ylab='Residuals');abline(h=0,lty=2)
+plot(resid(fit.cake)~cakes$Temperature, xlab='Temperature', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(fit.cake),ylab='Residuals'); qqline(resid(fit.cake),lty=2)
+hist(resid(fit.cake),main="", xlab="Residuals",col='lightblue')
+par(mfrow=c(1,1))
 
 ```
