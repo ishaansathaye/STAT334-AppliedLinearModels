@@ -145,6 +145,67 @@ for median it is true.
 \textbf{Matrix Scatterplot:} don't reflect preds act jointly.
 \\
 
+\textit{\textbf{\underline{8A:}}}
+\begin{itemize}
+    \item R-sq equation: partitioning variability (sequential sum of squares)
+    SSR, SSE, SSTO, which is R-sq
+    \item Adding vars moves SSE to SSR
+    \item Type 1: order matters, so far R-sq interp include after adjusting for
+    var if after 1st var
+    \item Type 1 SS block of info: anova(fit)
+    \item percent of variation in y explained by adding var to model already 
+    containing the vars \dots
+    \item Type 2 SS: Anova(fit, type = 2); var entered into model last; 
+    additional var in y explained by var after adjusting for all other vars;
+    not sequential
+\end{itemize}
+
+\textit{\textbf{\underline{8B:}}}
+\begin{itemize}
+    \item degrees of freedom for total, error, reg model; SS divided by df is MS
+    \item adding additional vars can never decrease R-sq
+    \item R-adj-sq (no interp) equation
+    \item General F test properties: p-values found and degrees of freedom
+    \item Partial F-Test: anova(fit.reduced, fit.full) where reduced is the
+    model without vars; null: r of betas is 0, alt: at least one beta is not 0; 
+    F stat equation; explain equation; 
+    are found
+    \item Model Utility Test: summary(fit) where fit is full model; null: all 
+    betas are 0, alt: at least one beta is not 0; F stat equation and explain 
+    equation; reduced model is the mean model (no predictors)
+    \item Single Coefficient Test: summary(fit) or Anova(fit, type='II') where 
+    fit is full model; null: one beta is 0, alt: not 0; F stat equation; reduced 
+    model is full model without 1 var; bold: equivalent to t-test t-sq = F
+    \item Bold: Type 1 ANOVA table contains SST if you sum the SS for all;
+    Type 2 ANOVA does not contain SST because it is not sequential
+    \item Model Utility Test Decision: reject null: sufficient evidence...; 
+    conclude that at least one of vars ... is significantly useful in 
+    predicting y
+    \item Single Coef Test Decision: large p-val means we do not have enough 
+    evidence to to believe that var is any diff from zero after adj...., that 
+    is var does not significantly improve the model containing other vars
+    \item Bold: Cannot just drop all variables if not significant, since taking 
+    them out would affect significance of other vars, need to come out one at a
+    time or perform partial F test
+    \item Partial F Test Decision: reject null: adding r vars to model that 
+    already contains other vars does not significantly improve the model. Do 
+    not have enough evidence that the full model containing all vars is better 
+    than reduced model. So keep reduced model because of parsimony; larger model 
+    achieves a significant reduction in SSE, boost in SSR and R-sq and improves 
+    pred of y
+    \item Partial F Null Hypoths: adding vars to smaller to form larger does not 
+    significantly improve prediction of y, pop reg coefs for vars in larger not 
+    in smaller model are 0, value of pop R-sq for larger model is not greater 
+    than value of param for smaller model
+\end{itemize}
+
+\textit{\textbf{\underline{10:}}}
+
+
+\textit{\textbf{\underline{11:}}}
+
+\textit{\textbf{\underline{12:}}}
+
 \textit{Midterm 2 Notes}
 \begin{itemize}
     \item hard question is about $R^2$ because given a bunch of output and need 
