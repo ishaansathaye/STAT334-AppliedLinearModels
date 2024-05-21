@@ -39,22 +39,20 @@
 % \AtTextCenter{\hspace{-0.6\textwidth}\rule{1.2\textwidth}{0.5pt}}}
 
 \textit{\textbf{\underline{1:}}}
-\textbf{Scatterplot:} form/shape, direction (positive/negative), strength (
-points follow recognizable form), unusual features (do not fit general trend).
+\textbf{Scatterplot:} form/shape, direction, strength (points follow 
+recognizable form), unusual features.
 \textbf{Association:} look at scales (might be misleading).
 \textbf{PC Coeff:} strength of linear association; -1 to 1; 0 means no linear; r
 does not change if variables are rescaled.
 \textit{\textbf{\underline{2:}}}
 \textbf{Residual:} observed - predicted; $e_i = y_i - \hat{y}_i$.
 \textbf{Least Squares:} minimize SSE: $\sum_{i=1}^{n} e_i^2$.
-\textbf{Coefficients:} determined by taking derivative of the SSE and solving
-for the coeffs when setting to 0.
-\textbf{Interp Coeff:} slope coeff as the pred change in Y associated with a one
--unit change in $X_i$, holding all other predictors constant; intercept as the 
+\textbf{Interp Coeff:} slope coeff as the pred change in Y associated with a 
+one-unit change in $X_i$, holding all other predictors constant; intercept as the 
 predicted Y value when all preds are 0 (could be nonsensical).
 \textbf{$R^2$:} coeff of determination; $ = \frac{SSE(\bar{y}) - SSE(\hat{y})}{SSE(\bar{y})}$;
 unexplained variation in y / total var in y (look at points distribution).
-\textbf{$R^2$ Interp:} $R^2 * 100$ is the percent reduction in SSE by taking into
+\textbf{$R^2$ Interp:} percent reduction in SSE by taking into
 account the predictors; percentage of variation in Y explained by the regression 
 function with predictors; range is 0 to 1 and 1 if perfect predictions; $R^2 = r^2$
 for simple linear regression.
@@ -79,7 +77,7 @@ from the graph by counting.
 \textbf{p-value:} probability of obtaining a result (test stat) at least as extreme 
 as the one observed, if the null were true; $<$ 0.1 is some, $<$ 0.05 is fairly 
 strong, $<$ 0.01 is very strong, $<$ 0.001 is extremely strong; small p-value 
-means result is unlikely to have occurred by change alone, if the null were true 
+means result is unlikely to have occurred by chance alone, if the null were true 
 making it statistically significant.
 \textbf{Inference on $\beta_j$:} $t = \frac{\hat{\beta}_j - \beta_j}{SE(\hat{\beta}_j)}$;
 $ 1 - \alpha$ confidence limits: $\hat{\beta}_j \pm t_{n-p, \alpha/2}SE(\hat{\beta}_j)$.
@@ -98,8 +96,7 @@ falls between l and u, (after adjusting for other predictors in the model)
 \textbf{use only when interpreting about the effect of one predictor with multiple
 predictors, say for conclusions too in inference tests}.
 \textbf{Bonferroni:} $1 - \frac{1-C}{g}$ where C is the confidence level and g is
-the number of coefficients being tested; instead of $\alpha/2$ in each tail 
-use $\frac{\alpha}{2g}$ in each tail; want each individual confidence to be 
+the number of coefficients being tested; want each individual confidence to be 
 above C in order for the joint level to be above C; \textbf{only for intervals}.
 \textbf{Joint CI Interp:} We are (at least) 95\% confident that all intervals 
 correctly capture the population parameters.
@@ -119,7 +116,7 @@ variance, low p means violated.
 \textbf{Interp of Slope:} only log transforms can be restated in terms of the 
 original vars, preds can always be restated in terms of original vars.
 \textbf{Transforming} Y: non-linearity, non-constant variance, and non-normality; 
-X: non-linearity, high leverage, influence; changing space = correct problems.
+X: non-linearity, high leverage, influence;
 \textbf{Ladder of Powers:} p = 2, 1, 0.5, 0, -0.5, -1, -2; y* = $y^2, y,
 \sqrt{y}, 1/\sqrt{y}, 1/y, 1/y^2$; right to become better; log and sqrt not
 defined for zero or negative values, so transform $y/x + c$, where c makes all 
@@ -131,111 +128,150 @@ non-normal and unequal var then y, only non-linear then x.
 right is y up or x up; down and left is y down or x down; down and right is y 
 down or x up.
 \textbf{Interp of X Transform:} If we multiply $x_i$ by b (chosen log base) we 
-predict a change of $\hat{\beta_i}$ in the mean value of y after adjusting for 
-the other vars in model.
-\textbf{Interp of Y Transform:} Each one unit change in $x_i$ changes the 
+predict a \textit{change} of $\hat{\beta_i}$ in the mean value of y after adjusting 
+for the other vars in model.
+\textbf{Interp of Y Transform:} Each one unit \textit{change} in $x_i$ \textit{changes} 
+the 
 predicted median value of y by a factor of $b^{\hat{\beta_i}}$ after \dots.
-\textbf{Interp of Both:} A c-fold change in $x_i$ changes the predicted median 
+\textbf{Interp of Both:} A c-fold \textit{change} in $x_i$ \textit{changes} the 
+predicted median 
 value of y by a factor of $c^{\hat{\beta_i}}$ after \dots.
 \textbf{Non-log Transform:} Each increase of one in $1/x_i$ is associated with 
 an increase of $\hat{\beta_i}$ in predicted $\sqrt{y}$.
 \textbf{Median:} median instead of mean because $E[log(Y)] \neq log[E(Y)]$ but 
 for median it is true.
 \textbf{Box-Cox:} round lambda to nearest 0.5.
-\textbf{Matrix Scatterplot:} don't reflect preds act jointly.
-\\
+\textbf{Matrix Scatterplot:} don't reflect preds act jointly.\\
 
 \textit{\textbf{\underline{8A:}}}
-\begin{itemize}
-    \item R-sq equation: partitioning variability (sequential sum of squares)
-    SSR, SSE, SSTO, which is R-sq
-    \item Adding vars moves SSE to SSR
-    \item Type 1: order matters, so far R-sq interp include after adjusting for
-    var if after 1st var
-    \item Type 1 SS block of info: anova(fit)
-    \item percent of variation in y explained by adding var to model already 
-    containing the vars \dots
-    \item Type 2 SS: Anova(fit, type = 2); var entered into model last; 
-    additional var in y explained by var after adjusting for all other vars;
-    not sequential
-\end{itemize}
-
+\textbf{R-sq equation:} SSTO = SSR + SSE; $R^2 = \frac{SSR}{SSTO}$; variation 
+explained by model / total variation in response; Adding vars moves SSE to SSR.
+\textbf{Type 1 SS:} \texttt{anova(fit)}; order matters, after adjusting for vars 
+earlier in model; additional var in y explained by adding x to model alreadly 
+containing other x's.
+\textbf{Type 2 SS:} \texttt{anova(fit, type = 'II')}; after adjusting for all 
+other vars in model; output row is var being entered last.
 \textit{\textbf{\underline{8B:}}}
-\begin{itemize}
-    \item degrees of freedom for total, error, reg model; SS divided by df is MS
-    \item adding additional vars can never decrease R-sq
-    \item R-adj-sq (no interp) equation
-    \item General F test properties: p-values found and degrees of freedom
-    \item Partial F-Test: anova(fit.reduced, fit.full) where reduced is the
-    model without vars; null: r of betas is 0, alt: at least one beta is not 0; 
-    F stat equation; explain equation; 
-    are found
-    \item Model Utility Test: summary(fit) where fit is full model; null: all 
-    betas are 0, alt: at least one beta is not 0; F stat equation and explain 
-    equation; reduced model is the mean model (no predictors)
-    \item Single Coefficient Test: summary(fit) or Anova(fit, type='II') where 
-    fit is full model; null: one beta is 0, alt: not 0; F stat equation; reduced 
-    model is full model without 1 var; bold: equivalent to t-test t-sq = F
-    \item Bold: Type 1 ANOVA table contains SST if you sum the SS for all;
-    Type 2 ANOVA does not contain SST because it is not sequential
-    \item Model Utility Test Decision: reject null: sufficient evidence...; 
-    conclude that at least one of vars ... is significantly useful in 
-    predicting y
-    \item Single Coef Test Decision: large p-val means we do not have enough 
-    evidence to to believe that var is any diff from zero after adj...., that 
-    is var does not significantly improve the model containing other vars
-    \item Bold: Cannot just drop all variables if not significant, since taking 
-    them out would affect significance of other vars, need to come out one at a
-    time or perform partial F test
-    \item Partial F Test Decision: reject null: adding r vars to model that 
-    already contains other vars does not significantly improve the model. Do 
-    not have enough evidence that the full model containing all vars is better 
-    than reduced model. So keep reduced model because of parsimony; larger model 
-    achieves a significant reduction in SSE, boost in SSR and R-sq and improves 
-    pred of y
-    \item Partial F Null Hypoths: adding vars to smaller to form larger does not 
-    significantly improve prediction of y, pop reg coefs for vars in larger not 
-    in smaller model are 0, value of pop R-sq for larger model is not greater 
-    than value of param for smaller model
-\end{itemize}
-
+\textbf{DF Type 1:} total = n-1, error = n-p, reg = p-1; MS = SS / df,
+MS = SSR / k, MSE = SSE / (n-k-1).
+\textbf{R-sq:} Adding additional vars can never decrease $R^2$; $R^2_{adj}$ 
+$ = 1 - \frac{SSE/(n-k-1)}{SSTO/(n-1)} = 1 - \frac{n-1}{n-k-1}(1-R^2)$; can 
+decrease when new unnecessary var is added to model.
+\textbf{General F Test Props:} p-values found in right tail (upper tail), df = 
+F(r, n-k-1), where r is number of vars in full model; FINE assumptions met for 
+partial F test.
+\textbf{Partial F-Test:} \texttt{anova(fit.reduced, fit.full)}; reduced is model
+without variables; $H_0$: r of $\beta_j$ is 0, $H_a$: at least one $\beta_j \neq 
+0$; F = $\frac{(SSE_{reduced} - SSE_{full})/r}
+{MSE(full)}$; can replace SSE with SSR but full is first; numerator is reduction 
+in SSE (boost in SSR) for full compared to reduced, dividing by r accounts for 
+change in model complexity, standardize by MSE of full model.
+\textbf{Model Utility Test:} \texttt{summary(fit)}; $H_0$: all $\beta_j$ are 0,
+$H_a$: at least one $\beta_j \neq 0$; F = $\frac{(SSTO - SSE(full))
+/k}{MSE(full)} = \frac{MSR}{MSE}$; numerator is the SSR(full); reduced model is 
+mean model (no predictors);
+\textbf{Single Coef Test:} \texttt{summary(fit) or Anova(fit, type='II')}; 
+$H_0$: $\beta_j = 0$, $H_a$: $\beta_j \neq 0$; F = 
+$\frac{(SSR(full) - SSR(all-but-x_j))/1}{MSE(full)}$; reduced model is full 
+model without $x_j$; \textbf{Equivalent to t-test with $t^2$ = F and 
+p-values are the same}.
+\textbf{SS Total: Type 1 ANOVA table contains SST, not Type 2 b/c not 
+sequential}.
+\textbf{MUT Decision:} reject $H_0$ means we have sufficient evidence to conclude 
+that at least one of vars is not equal to 0. Can conclude that at least one of 
+vars is significantly useful in predicting y.
+\textbf{SCT Decision:} large p-val means we do not have enough evidence to 
+believe that var is any different form zero after adjusting for other vars, 
+that is var does not significantly improve the model containing other vars.
+\textbf{PFT Decision:} Fail to reject the null, adding r vars to model that already 
+contains other vars does not significantly improve model. Not enough evidence 
+that full containing all vars is better than reduced model, so keep reduced 
+b/c of parsimony; Reject null, means larger has significant reduction in SSE, 
+bost in SSR and $R^2$, and improves pred of Y.
+\textbf{Dropping Vars:} cannot just drop all variables if not significant, need 
+to come out one at a time or perform partial F test.
 \textit{\textbf{\underline{10:}}}
-
-
+\textbf{Point Estimate:} $\hat{y}_0 = x^T_0\hat{\beta}$; in R, \texttt{predict()}.
+\textbf{Prediction Interval:} $t_{n-k-1, \alpha/2} s \sqrt{1 + x^T_0
+(X^TX)^{-1}x_0}$; predicting the future response $y_0$ of an individual for a 
+particular value of $x_0$, use "individual" in interp; wider than CI b/c of 
+greater uncertainty around predicting individual observation; wider as we move 
+further away from original combination of data; refer to as a chance since it 
+is a future observation.
+\textbf{Confidence Interval:} same but without the 1 + term; \textbf{predicting 
+mean response for a particular value of $x_0$}; use "all" keyword.
 \textit{\textbf{\underline{11:}}}
-
+\textbf{Signs of MultiCol:} corr matrix values close to 1 or -1; coeffs do not 
+expected signs; overall F test significant but no t-tests significant; large 
+VIFs.
+\textbf{VIF:} $VIF_j = \frac{1}{1 - R^2_{i}}$, where $R^2_{i}$ is the proportion 
+of variation in $x_i$ that is explained by its linear relationship to other vars; 
+measures increase in variability of ith sample reg coeff due to linear assoc of 
+$x_i$ with other preds in model; $VIF_j = 1$ if not linearly related, SD is 
+unchanged when other preds enter model; 5 or 10 means problems in estimation, 
+4 means SD doubles, 10 means SD triples; Ex. regressing x on other x's;
+\textbf{Added Variable Plot:} $residual(y\sim x_1+x_2)$ vs $residual(x_3\sim 
+x_1+x_2)$ where first is y with the effect of x1 and x2 removed and second is x3 
+with the effect of x1 and x2 removed; \textbf{whether $x_i$ has anything new 
+to tell us (unique contribution) after removing effect of other vars}; intercept 
+should always be 0 since SSE = 0; reg line goes through average which is 0; 
+linear relationship means useful; ex. association between left over (unexplained) 
+variation in y and x1 after adding x2 to the model (looking at x1); 
+\textbf{Slope of LS Line:} what it means to adjust for other vars; slope of LS 
+line in plot is the reg coeff of xi in multiple reg model; entire row is same in
+output; large p-val means xi not useful to add to model that already has other
+vars.
 \textit{\textbf{\underline{12:}}}
+\textbf{Leverage:} outlying in x-space; ith diagonal of hat matrix is leverage
+of ith obs; $h_{ii}$ is leverage of ith obs; 0 to 1, $h_i > 2\bar{h} = 2(k+1)/n$
+are leverage points.
+\textbf{Influential:} removing obs changes fit of model; outlying in x and y not
+consistent; large residuals mean outlying in y.
+\textbf{Internally Studentized Residual:} $r_i = e_i / s\sqrt{1 - h_{i}}$; $r_i$
+$>$ 3 is large residual; \texttt{rstandard(fit)}.
+\textbf{Externally Studentized Residual:} $t_i = e_i / s_{(i)}\sqrt{1 - h_{i}}$;
+$s_{(i)}$ is s when ith obs removed; $t_i > Bonferroni t^*$ is extreme; 
+\texttt{rstudent(fit)}.
+\textbf{DFFITS:} $\frac{\hat{y}_i - \hat{y}_{i(i)}}{s\sqrt{h_{i}}}$; comparing 
+fitted values w/wo obs in data set and standardize by denom.
+\textbf{Cook's Distance:} $D_i = \frac{1}{p+1}\frac{e_i^2}{s^2}
+\frac{h_{ii}}{1 - h_{ii}}$ which is constant*internally studentized residual*
+leverage; it is an aggregated measure of the effect of removing ith obs on all
+predicted values.
+\textbf{Guidelines Both:} $>$ 1 as being influential for n $<$ 30, greater than 
+$2\sqrt{(k+1)/n}$ for large, $D_i$ greater than 0.5 or 1 as influential.\\
+\\
 
-\textit{Midterm 2 Notes}
-\begin{itemize}
-    \item hard question is about $R^2$ because given a bunch of output and need 
-    to know where to look; handout 8 anova tables
-    \item 2 of the 3 F tests are on the Midterm
-    \item Nothing about handout 12 really on the midterm
-    \item No VIF problems but on that handout talked about added variable plots
-    which is important
-    \item transforming is back on the midterm (interpretations)
-    \item more plots that we have seen before (harder plots) residuals vs fitted
-    can have more than 1 assumption can be met
-    \item stuff on the sequential sum of squres (handout 8) - focus on this
-\end{itemize}
+% \textit{Midterm 2 Notes}
+% \begin{itemize}
+%     \item hard question is about $R^2$ because given a bunch of output and need 
+%     to know where to look; handout 8 anova tables
+%     \item 2 of the 3 F tests are on the Midterm
+%     \item Nothing about handout 12 really on the midterm
+%     \item No VIF problems but on that handout talked about added variable plots
+%     which is important
+%     \item transforming is back on the midterm (interpretations)
+%     \item more plots that we have seen before (harder plots) residuals vs fitted
+%     can have more than 1 assumption can be met
+%     \item stuff on the sequential sum of squres (handout 8) - focus on this
+% \end{itemize}
 
-\textit{Midterm 2 Notes: Krish's Class}
-\begin{itemize}
-    \item lots of tables
-    \item lots of stuff from Handout 8
-    \item stuff on multicollinearity, nothing about cook's distance, not much on
-    handout 12, nothing about leverage
-    \item lots of questions from HW 4, on anova type 1 and type 2, tables, 
-    sequential, etc.
-    \item hard question about Anova tables
-    \item know the SS for Anova and know true differnce between type 1 and type 
-    2 and whento use each specifically
-    \item one question from H10 about the intervals and R output (detailed 
-    questions about the output), know interpretation of this too
-    \item question on transformation similar to previous Midterm
-    \item hard question on $R^2$ specifically
-\end{itemize}
+% \textit{Midterm 2 Notes: Krish's Class}
+% \begin{itemize}
+%     \item lots of tables
+%     \item lots of stuff from Handout 8
+%     \item stuff on multicollinearity, nothing about cook's distance, not much on
+%     handout 12, nothing about leverage
+%     \item lots of questions from HW 4, on anova type 1 and type 2, tables, 
+%     sequential, etc.
+%     \item hard question about Anova tables
+%     \item know the SS for Anova and know true differnce between type 1 and type 
+%     2 and whento use each specifically
+%     \item one question from H10 about the intervals and R output (detailed 
+%     questions about the output), know interpretation of this too
+%     \item question on transformation similar to previous Midterm
+%     \item hard question on $R^2$ specifically
+% \end{itemize}
 
 % \textit{Midterm Notes}
 % \begin{itemize}
