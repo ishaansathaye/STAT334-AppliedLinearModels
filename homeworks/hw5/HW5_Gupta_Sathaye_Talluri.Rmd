@@ -1,0 +1,138 @@
+---
+title: "Homework 5"
+subtitle: STAT 334
+author: "Krishnanshu Gupta, Ishaan Sathaye, Sreshta Talluri"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: readable
+    highlight: haddock
+    toc: true
+    toc_float: true
+    code_folding: hide  
+---
+
+```{r chunk setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval=TRUE,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+```{r packages, include=FALSE}
+library(readxl)
+library('car')
+setwd( dirname( rstudioapi::getActiveDocumentContext( )$path ) )
+```
+
+# Question 2
+
+```{r derby}
+derby <- read_xls("./KYDerby12.xls")
+str(derby)
+derby$condition=factor(derby$condition)
+```
+
+## Part (a)
+
+```{r}
+plot(Time~Year,data=derby,pch=19)
+
+# Set distance to 1.5 for Year<1896 and 1.25 else
+derby$Distance = ifelse(derby$Year<1896, 1.5, 1.25)
+  
+# Create speed variable by dividing distance over time 
+# multiply by 5280 to change units to ft/sec (instead of mi/sec)
+derby$Speed = derby$Distance / derby$Time * 5280 
+
+#view structure of updated data frame
+str(derby)
+```
+
+The scatter plot of the Kentucky Derby winning times from the late 1800s to the early 2000s shows a clear trend of decreasing and stabilizing times over the years. In the beginning, there was high variability and generally slower times, but from the mid-1900s the times became faster and more consistent. Therefore this creates 2 clusters in the plot. This makes sense probably because of the the improvements in training methods, track conditions, horse breeding, and racing tech in general. These facts would have enhanced the performance of racehorses, which would lead to better race outcomes.
+
+## Part (b)
+
+```{r}
+plot(Speed~Year,data=derby,pch=19)
+```
+
+The overall pattern in this plot seems to be increasing speeds from the late 1800s to the early 2000s that have a rapid increase in the early years and then taper off from the mid-1900s onwards. There does seem to be an unusual observation with some slower speeds during the late 1800s and the early 1900s. There is also one point that needs to be investigated since it deviates from the general pattern in the plot. The relationship is not perfectly linear due to the significant increases in speeds early on and then the stabilization later. However, the relationship is not really monotonic because of the increase of speed over time is not consistent.
+
+## Part (c)
+
+```{r}
+fit.derby=lm(Speed~Year+I(Year^2),data=derby)
+summary(fit.derby)
+```
+
+```{r}
+par(mfrow=c(1,3))
+plot(resid(fit.derby)~fitted(fit.derby), xlab='Fitted', ylab='Residuals');abline(h=0,lty=2)
+qqnorm(resid(fit.derby),ylab='Residuals'); qqline(resid(fit.derby),lty=2)
+hist(resid(fit.derby),main="", xlab="Residuals",col='lightblue')
+```
+
+```{r}
+vif(fit.derby)
+```
+
+The $R^2$ value is 0.7519 and the $s$ value is 0.8967. The overall regression model is significant because the p-value is low and the F-statistic is large, given by the model utility test. The quadratic term as well as the linear term is significant given the low p-values. The VIF values for the linear and quadratic term are very high with values of 11903.92, which means there is evidence of multi-collinearity (since same variable is just being transformed). From the residual plots there does not seem to be any major violations of equal variance and linearity. Other than the unusual observation, normality also seems to be fine.
+
+## Part (d)
+
+```{r}
+derby$YearC=derby$Year-mean(derby$Year)
+fit.derbyC=lm(Speed~YearC+I(YearC^2),data=derby)
+summary(fit.derbyC)
+```
+
+```{r}
+vif(fit.derbyC)
+```
+
+The VIF value is now 1 for both, which means the multi-collinearity has improved.
+
+## Part (e)
+
+```{r}
+mean(derby$Year)
+```
+
+In the mean year of 1943.5, we expect the speed to be 53.17 feet per second.
+
+## Part (f)
+
+The sign of the first regression coefficient which is the linear term is positive, which means that initially as the year increases the speed also increases. The sign of the second regression coefficient which is the quadratic term is negative, which means that the rate of increase in speed slows down over time and eventually starts to decline for very large values of the year. This behavior does make sense in context because early on there could be significant improvements in technology would mean a noticeable increase in speed. After that improvements may reach their limits which means the increase in speed slows down, which could be the flattening in the scatter plot. For larger years, the speeds might not increase and could even slightly decrease due to natural limits.
+
+## Part (g)
+
+```{r}
+x0=data.frame(YearC=(2013-mean(derby$Year)))
+predict(fit.derbyC, x0, interval = "prediction", level = 0.95)
+```
+
+We are 95% confident that in the year 2013 a horse would have speed that falls in between 52.14 ft/sec and 55.81 ft/sec.
+
+## Part (h)
+
+```{r}
+6601.049868766404199/(120+12+0.089)
+```
+
+Source: [HorseLoversMath](https://www.horseloversmath.com/orb-wins-the-kentucky-derby/#:~:text=Orb%20won%20the%202013%20Kentucky,8%20feet%20or%202.4%20metres.)
+
+According to HorseLoversMath, Orb had a time of 2 minutes 2.89 seconds. Calculating the speed means that the winning speed in 2013 was 49.97 feet per second. The horse's speed is not captured in my prediction interval.
+
+## Part (g)
+
+```{r}
+fit.derby3=lm(Speed~YearC+I(YearC^2)+I(YearC^3),data=derby)
+summary(fit.derby3)
+```
+
+```{r}
+Anova(fit.derby3, type = 'II')
+```
+
+Using a Single Coefficient Test, we can test the null whether the cubic term beta is 0 and the alt hypothesis where it is not 0. With a F stat of $t^2 = 3.07$, the F statistic is pretty low and the p-value is relatively large. We do not have sufficient evidence to believe that the cubic variable is any different from 0 after adjusting for the linear and quadratic terms. This means that the variable does not significantly improve the model containing the other terms and it is not useful to the model.
