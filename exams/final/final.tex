@@ -151,7 +151,8 @@ explained by model / total variation in response; Adding vars moves SSE to SSR.
 earlier in model; additional var in y explained by adding x to model alreadly 
 containing other x's.
 \textbf{Type 2 SS:} \texttt{anova(fit, type = 'II')}; after adjusting for all 
-other vars in model; output row is var being entered last.
+other vars in model; output row is var being entered last.\\
+
 \textit{\textbf{\underline{8B:}}}
 \textbf{DF Type 1:} total = n-1, error = n-p, reg = p-1; MS = SS / df,
 MS = SSR / k, MSE = SSE / (n-k-1).
@@ -190,7 +191,8 @@ that full containing all vars is better than reduced model, so keep reduced
 b/c of parsimony; Reject null, means larger has significant reduction in SSE, 
 bost in SSR and $R^2$, and improves pred of Y.
 \textbf{Dropping Vars:} cannot just drop all variables if not significant, need 
-to come out one at a time or perform partial F test.
+to come out one at a time or perform partial F test.\\
+
 \textit{\textbf{\underline{10:}}}
 \textbf{Point Estimate:} $\hat{y}_0 = x^T_0\hat{\beta}$; in R, \texttt{predict()}.
 \textbf{Prediction Interval:} $t_{n-k-1, \alpha/2} s \sqrt{1 + x^T_0
@@ -200,7 +202,8 @@ greater uncertainty around predicting individual observation; wider as we move
 further away from original combination of data; refer to as a chance since it 
 is a future observation.
 \textbf{Confidence Interval:} same but without the 1 + term; \textbf{predicting 
-mean response for a particular value of $x_0$}; use "all" keyword.
+mean response for a particular value of $x_0$}; use "all" keyword.\\
+
 \textit{\textbf{\underline{11:}}}
 \textbf{Signs of MultiCol:} corr matrix values close to 1 or -1; coeffs do not 
 expected signs; overall F test significant but no t-tests significant; large 
@@ -220,7 +223,8 @@ variation in y and x1 after adding x2 to the model (looking at x1);
 \textbf{Slope of LS Line:} what it means to adjust for other vars; slope of LS 
 line in plot is the reg coeff of xi in multiple reg model; entire row is same in
 output; large p-val means xi not useful to add to model that already has other
-vars.
+vars.\\
+
 \textit{\textbf{\underline{12:}}}
 \textbf{Leverage:} outlying in x-space; ith diagonal of hat matrix is leverage
 of ith obs; $h_{ii}$ is leverage of ith obs; entries $h_{ij}$ hat matrix can be 
@@ -278,7 +282,7 @@ model; in R it is the first level in alphabetical order, change with
 \texttt{relevel()}.
 \textbf{Sum Coding:} c(-1, 1) for 2 levels; same parallel lines with same 
 distance between them; Ex. coefficient of sex is telling us how much 
-below/above average teh female/male mean response lines is, for any given 
+below/above average the female/male mean response lines is, for any given 
 footsize; 
 \textbf{Difference in Coding:} In SUM Coding, compare the mean response of each 
 level to a "grand mean"; in TREATMENT Coding, compare to the mean response of 
@@ -297,7 +301,10 @@ the predicted span, holding thorax constant; $b^{\hat{\beta_i}}$.
 \texttt{GVIF\^(1/(2*DF))} values with DF being \# of dummy vars used; square 
 these values and then use VIF rule of thumb.
 \textbf{Factor Degrees of Freedom:} cat variable with d cats counts as d-1 vars 
-when counting DF.\\
+when counting DF.
+\textbf{CI for Cat:} Ex. We are 95\% confident that the mean speed on the slow 
+track is between \dots slower than the mean speed on the fast track, after 
+adjusting for year, in the population.\\
 
 \textit{\textbf{\underline{15:}}}
 \textbf{Interaction Term:} $x_1*x_2$ allows us to model a change in the "effect" 
@@ -312,6 +319,13 @@ by which the FEV increases for a 1 year increase in age is between 0.10 and 0.23
 on its own because impact of it on FEV depends on age; For a \textbf{fixed age} 
 the estimated difference in FEV for smokers vs non-smokers is 1.94 - 0.163*age, 
 take difference between the equations.
+\textbf{Interaction Context:} coeff is the predicted increase in the slop coeff 
+of age between protein poor and rich diets, predicted increase in height 
+associated with each one year increase in age is smaller by 7.33cm/year for poor 
+diet compared to rich diet.
+\textbf{Quant x Quant Interaction:} Fix one var and see how the slope of the
+other var changes; fish that have a large length show greater weight increases 
+for 1 extra cm of width than for shorter fish.
 \textbf{Remark on Testing Lower Terms:} When interaction term is important, 
 testing lower order terms on their own does not make sense, even if they are not 
 significant.
@@ -338,10 +352,40 @@ race and region; null is all interaction terms are 0.
 ln(wage) is between ... higher for non-blacks than for blacks after adj\dots;
 use "times" if embracing log transformation.
 \textbf{Sign Interp of Interaction:} Negative means positive impact of education 
-lessens as experience increases (vice versa).\\
+lessens as experience increases (vice versa).
 
 \textit{\textbf{\underline{17:}}}
-\textbf{Best Subsets:} 
+\textbf{Best Subsets:} examine all possible models; for each number of coeff p, 
+p includes the intercept; determine 1-3 best models; in R \texttt{regsubsets()}.
+\textbf{Sequential:} \textbf{Forwards Selection:} start with some or no preds 
+and one by one add vars, stop when new vars have large p-val or increase in 
+AIC; \textbf{Backward Elim:} start with all preds and remove vars one by one 
+by largest p-val or largest decrease in AIC (same as Forward), stop when 
+deletion increases AIC or preds have low p-vals; \textbf{Stepwise Regression:} 
+each step all regressors previously entered are reassessed, prev var brought in 
+early can be dropped; in R all three use \texttt{step()}
+\textbf{Criteria for MOdel Comparison:} $R^2$, only used for models with same 
+number of preds; $R^2_{adj}$ favors models with too many vars; AIC and BIC which 
+is desired to be small; $C_p$ with small p and small stat and p $\sim C_p$; 
+basically \textbf{smallest SSE wins}.
+
+\textit{\textbf{\underline{18:}}}
+\textbf{External Validation Methods:} Method 1: use validation data to 
+re-estimate the model, if characteristics consistent then model is good; Model 2:
+predict cases from validation data and calculate mean squared prediction errors 
+(MSPE), if small then model is good, and if close to MSE from training data 
+then predictive ability of model is good; equation same as MSE but with 
+validation data.
+\textbf{External Remarks:} have at least $n^* > 2p + 5$ observ in valid data; 
+can take RMSPE to compare with s.
+\textbf{Internal Validation:} PRESS = $\sum_{i=1}^{n} (y_i - \hat{y}_{(i)})^2$;
+small PRESS desired, measures how well reg model predicts new data; $R^2_{pred} 
+= 1 - \frac{PRESS}{SSTO}$; $R^2_{pred}$ where large is good, interpreted as 
+percentage of variability in the response explained by the model when predicting
+new obsv.; \textbf{PRESS and $R^2_{pred}$ close to SSE and $R^2$ then fitted 
+reg model is valid, $R^2_{pred}$ greater than $R^2$ means overfitting}.
+\textbf{Concerns:} change of signs between training and validation data for 
+models.
 
 
 % \textit{Midterm 2 Notes}
@@ -389,23 +433,23 @@ lessens as experience increases (vice versa).\\
 %     \item know how to calculate a p-value (shade the area) (permutation test handout)
 % \end{itemize}
 
-\textit{Final Exam Notes}
-\begin{itemize}
-    \item Homework 5, especially the last 2 questions (additive models and 
-    interactions)
-    \item Partial F tests still on Exam
-    \item questions may be similar to midterm 2
-    \item hat matrix and \textbf{leverage} (high leverage alone not a problem, problem 
-    when it has inference) (2 MC on leverage)
-    \item problem 1 is similar to some outputs on exam 2; lm output and anova 
-    outputs of that model; follow up questions ask based on outputs; 
-    interpretations; influential points on a plot with standardized residuals; 
-    \item Cook's distance, standardized residuals\dots
-    \item hardest problem is outputs of summary(lm); three different models and 
-    see contradicting information; why outputs are contradicting; matrix 
-    scatterplot also included in those outputs (a lot of information)
-    \item bunch of interpretations here
-    \item 3 calculations on the exam (R-sq, F statistic for sure)
-\end{itemize}
+% \textit{Final Exam Notes}
+% \begin{itemize}
+%     \item Homework 5, especially the last 2 questions (additive models and 
+%     interactions)
+%     \item Partial F tests still on Exam
+%     \item questions may be similar to midterm 2
+%     \item hat matrix and \textbf{leverage} (high leverage alone not a problem, problem 
+%     when it has inference) (2 MC on leverage)
+%     \item problem 1 is similar to some outputs on exam 2; lm output and anova 
+%     outputs of that model; follow up questions ask based on outputs; 
+%     interpretations; influential points on a plot with standardized residuals; 
+%     \item Cook's distance, standardized residuals\dots
+%     \item hardest problem is outputs of summary(lm); three different models and 
+%     see contradicting information; why outputs are contradicting; matrix 
+%     scatterplot also included in those outputs (a lot of information)
+%     \item bunch of interpretations here
+%     \item 3 calculations on the exam (R-sq, F statistic for sure)
+% \end{itemize}
 
 \end{document}
